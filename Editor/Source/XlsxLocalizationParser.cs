@@ -7,7 +7,7 @@ using static Localization.Editor.LocalizationEditorText;
 
 namespace Localization.Editor
 {
-    public static class XlsxLocalizationParser
+    internal static class XlsxLocalizationParser
     {
         public static List<LocalizationData> Import(string xlsxPath)
         {

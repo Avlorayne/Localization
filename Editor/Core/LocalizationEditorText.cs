@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Localization.Editor
 {
-    public static class LocalizationEditorText
+    internal static class LocalizationEditorText
     {
         private static readonly Dictionary<string, string[]> Texts = new()
         {
@@ -120,7 +120,10 @@ namespace Localization.Editor
             ["undo.edit.entry"] = new[]
                 { "Edit Localization Entry", "编辑本地化条目", "編輯在地化項目", "ローカライズ項目を編集", "현지화 항목 편집" },
             ["undo.normalize.invalid.keys"] = new[]
-                { "Normalize Invalid Localization Keys", "正则化非法本地化 Key", "正規化非法在地化 Key", "不正なローカライズキーを正規化", "잘못된 현지화 Key 정규화" },
+            {
+                "Normalize Invalid Localization Keys", "正则化非法本地化 Key", "正規化非法在地化 Key", "不正なローカライズキーを正規化",
+                "잘못된 현지화 Key 정규화"
+            },
             ["normalize.invalid.keys"] = new[]
             {
                 "Normalize Invalid Keys", "一键正则化大写", "一鍵正規化大寫", "不正キーを正規化", "잘못된 Key 정규화"

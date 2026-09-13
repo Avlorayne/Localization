@@ -6,7 +6,7 @@ using static Localization.Editor.LocalizationEditorText;
 
 namespace Localization.Editor
 {
-    public static class LocalizationSourceExporter
+    internal static class LocalizationSourceExporter
     {
         public static readonly string[] SupportedExtensions = { ".xlsx", ".csv" };
 

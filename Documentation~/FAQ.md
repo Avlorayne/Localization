@@ -6,6 +6,8 @@
 
 It is a historical default, and the address candidates stay compatible with Resources-style paths. Runtime loading actually goes through Addressables: once a `LanguageDataSO` passes key, duplicate-key and content-placeholder validation, the tooling automatically adds it to the `Localization` Addressables group with its `NamespaceId` as the address.
 
+`LanguageConfigSO` is also created under `Assets/Resources/Localization` by the package menu because it is runtime configuration, not Editor-only state. The source hash cache remains under `Assets/Settings` because it is Editor-only data.
+
 ## Why does runtime report "Addressable language data not found"?
 
 Common causes: the data did not pass validation, or the Addressables address does not match the namespace. Auto-registration uses `NamespaceId` as the address; it is still recommended to keep the `LanguageDataSO` asset name and `NamespaceId` identical, e.g. both `UI`.

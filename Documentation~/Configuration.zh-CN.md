@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `name` | `com.dotline.localization` | UPM 包名。发布后不应随意修改。 |
 | `displayName` | `Localization` | Package Manager 中显示的名称。 |
-| `version` | `1.0.0` | 语义化版本。公共 API 或数据格式变更时同步更新。 |
+| `version` | `1.0.3` | 语义化版本。公共 API 或数据格式变更时同步更新。 |
 | `license` / `type` | `MIT` / `tool` | 许可证与包类型。 |
 | `unity` | `2022.3` | 最低 Unity 版本。 |
 | `dependencies.com.unity.addressables` | `1.22.3` | Runtime 通过 Addressables 加载 `LanguageDataSO`。 |
@@ -16,7 +16,7 @@
 
 ## LanguageConfigSO
 
-创建入口：`Create > Settings > Language Config`，或 `Tools/Localization/Open Language Config`。
+创建入口：`Create > Settings > Language Config`，或 `Tools/Localization/Open Language Config`。包菜单默认将资产保存为 `Assets/Resources/Localization/LanguageConfig.asset`，这样运行时代码可以从 `Resources` 加载它。
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ WELCOME,欢迎 {0},歡迎 {0},Welcome {0},{0} ようこそ,{0} 환영합니다,�
 
 | 菜单 | 行为 |
 | --- | --- |
-| `Tools/Localization/Open Language Config` | 打开或创建 `Assets/Settings/LanguageConfig.asset`。 |
+| `Tools/Localization/Open Language Config` | 打开或创建 `Assets/Resources/Localization/LanguageConfig.asset`。 |
 | `Tools/Localization/Convert Changed Source Files` | 根据源文件和 SO 哈希，只转换变化项。 |
 | `Tools/Localization/Convert All Source Files` | 强制转换全部 `.csv` 和 `.xlsx` 源文件。 |
 | `Tools/Localization/Validate Duplicate Keys` | 扫描所有 `LanguageDataSO`，按命名空间检查重复 Key。 |

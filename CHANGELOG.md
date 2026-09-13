@@ -2,6 +2,15 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.0.3] - 2026-09-14
+
+### Changed
+
+- Restrict Editor-only implementation types to `internal` while preserving EditMode test access through a friend assembly.
+- Store the runtime `LanguageConfigSO` at `Assets/Resources/Localization/LanguageConfig.asset` by default; keep the Editor-only source hash cache under `Assets/Settings`.
+- Update the Basic Localization sample and runtime API documentation to expose a reusable singleton component with automatic Resources configuration loading, current language code lookup, and documented usage.
+- Update package metadata and installation references to `1.0.3`.
+
 ## [1.0.2] - 2026-09-14
 
 ### Fixed

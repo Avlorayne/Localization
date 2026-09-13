@@ -119,7 +119,8 @@ namespace Localization.Tests
                 lookupType.GetMethod("AddData", BindingFlags.Instance | BindingFlags.NonPublic)
                     .Invoke(lookup, new object[] { source });
 
-                Type resolverType = typeof(LanguageDataSO).Assembly.GetType("Localization.LocalizationTemplateResolver");
+                Type resolverType =
+                    typeof(LanguageDataSO).Assembly.GetType("Localization.LocalizationTemplateResolver");
                 string result = (string)resolverType
                     .GetMethod("Resolve", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                     .Invoke(null, new object[]

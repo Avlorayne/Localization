@@ -2,7 +2,7 @@
 namespace Localization.Editor
 {
     /// <summary>本地化源文件（CSV/XLSX）表头的语义判断。</summary>
-    public static class LocalizationSourceHeaders
+    internal static class LocalizationSourceHeaders
     {
         public static bool IsCommentHeader(string header)
         {

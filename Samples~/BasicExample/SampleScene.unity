@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd5d00a0c36aac4fb66b07e4e9d4183, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  languageConfig: {fileID: 11400000, guid: e19e020d0f547be4991eed6a358d60bc, type: 2}
+  config: {fileID: 11400000, guid: e19e020d0f547be4991eed6a358d60bc, type: 2}
   languageCode: en
 --- !u!4 &306940173
 Transform:

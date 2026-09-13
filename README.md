@@ -1,6 +1,6 @@
 # Localization for Unity
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
@@ -36,7 +36,7 @@ Requires **Unity 2022.3** or newer; `com.unity.addressables` 1.22.3 is resolved 
 **Option 1 — Git URL (recommended)**: in the Package Manager click `+` → **Add package from git URL** and paste:
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.2
+https://github.com/Avlorayne/Localization.git#1.0.3
 ```
 
 Or add it to `Packages/manifest.json` directly:
@@ -44,7 +44,7 @@ Or add it to `Packages/manifest.json` directly:
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.2"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.3"
   }
 }
 ```
@@ -135,7 +135,7 @@ The generated `LanguageDataSO` assets can be searched, added, edited and deleted
 
 ### First-time configuration
 
-Run **Tools → Localization → Open Language Config** to create or open `Assets/Settings/LanguageConfig.asset`:
+Run **Tools → Localization → Open Language Config** to create or open `Assets/Resources/Localization/LanguageConfig.asset`:
 ![Open the Localization menu](screenshots/open_settins.png)
 ![LanguageConfig](screenshots/lang_config.png)
 
@@ -155,21 +155,30 @@ Run **Tools → Localization → Open Language Config** to create or open `Asset
 ### Runtime API
 
 ```csharp
-using Localization;
 using UnityEngine;
 
 public sealed class LocalizedLabelExample : MonoBehaviour
 {
-    [SerializeField] private LanguageConfigSO languageConfig;
-
-    private LocalizationSystem localization;
+    private BasicLocalizationExample localization;
 
     private void Awake()
     {
-        localization = new LocalizationSystem(languageConfig);
+        localization = BasicLocalizationExample.Instance;
         localization.SetLanguage("en");
+        Debug.Log($"Language: {localization.GetLanguageCode()}");
         Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
-        localization.OnLanguageChanged += RefreshAllTexts; // refresh UI after switching language
+        localization.AddListener(RefreshAllTexts); // refresh UI after switching language
+    }
+
+    private void OnDestroy()
+    {
+        if (localization != null)
+            localization.RemoveListener(RefreshAllTexts);
+    }
+
+    private void RefreshAllTexts()
+    {
+        Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
     }
 }
 ```
@@ -180,7 +189,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
   localization.GetLocalizedText($"<UI|WELCOME(<UI|PLAYER_NAME>, \"{name}\")>");
   ```
 - Runtime address resolution accepts the namespace name, the `Localization/<name>` convention, and the default `Assets/Resources/Localization/<name>.asset` path. With the default settings you don't need to manage these addresses manually.
-- Hook UI refresh logic to `LocalizationSystem.OnLanguageChanged`.
+- For the sample facade, hook UI refresh logic with `BasicLocalizationExample.AddListener` and remove the same callback with `RemoveListener`.
 
 ### WebGL notes
 
@@ -209,6 +218,35 @@ The current public API exposes synchronous lookup only. WebGL cannot block on Ad
 ## Sample
 
 Import **Basic Localization Example** from the Samples section of the package in the Package Manager. You get a minimal CSV source file and the `BasicLocalizationExample` scripts, demonstrating configuration, conversion, and runtime lookup.
+
+The imported sample project contains:
+
+- `SampleScene`, which already includes `BasicLocalizationExample` and the text example component.
+- `UI.csv`, a minimal localization source file.
+- `Resources/Localization/LanguageConfig.asset`, loaded automatically at runtime when no config is assigned.
+
+To use the sample:
+
+1. Open the imported `BasicExample` folder and select `Resources/Localization/LanguageConfig.asset`.
+2. Set `sourceFolderPath` to the folder containing `UI.csv`, then keep `soFolderPath` at `Assets/Resources/Localization` or another project-approved output folder.
+3. Initialize Addressables in the host project and run `Tools/Localization/Convert All Source Files`.
+4. Open `SampleScene` and run it. The generated localization assets are added to the `Localization` Addressables group automatically.
+
+`BasicLocalizationExample` provides a small singleton facade for scene scripts:
+
+```csharp
+BasicLocalizationExample localization = BasicLocalizationExample.Instance;
+localization.SetLanguage("en");
+
+string languageCode = localization.GetLanguageCode();
+string text = localization.GetLocalizedText("<UI|START_GAME>");
+
+localization.AddListener(RefreshTexts);
+// Remove the same callback when it is no longer needed:
+// localization.RemoveListener(RefreshTexts);
+```
+
+The sample config is stored under `Resources/Localization`, so the runtime default lookup path is `Resources.Load<LanguageConfigSO>("Localization/LanguageConfig")`.
 
 ## Known limitations
 

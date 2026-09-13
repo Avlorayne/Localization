@@ -11,7 +11,7 @@ using static Localization.Editor.LocalizationEditorText;
 namespace Localization.Editor
 {
     [CustomEditor(typeof(LanguageDataSO))]
-    public class LanguageDataSOEditor : UnityEditor.Editor
+    internal class LanguageDataSOEditor : UnityEditor.Editor
     {
         private VisualElement root;
         private ScrollView entriesScrollView;

@@ -26,7 +26,7 @@ EditMode 测试位于 `Tests/Editor`，测试程序集为 `Dotline.Localization.
 
 | 编号 | 场景 | 步骤 | 预期 |
 | --- | --- | --- | --- |
-| M01 | 初次配置 | 执行 `Tools/Localization/Open Language Config` | 创建并选中 `Assets/Settings/LanguageConfig.asset`。 |
+| M01 | 初次配置 | 执行 `Tools/Localization/Open Language Config` | 创建并选中 `Assets/Resources/Localization/LanguageConfig.asset`。 |
 | M02 | CSV 增量导入 | 修改源目录中的 CSV，执行 `Convert Changed Source Files` | 只更新变更源对应的 `LanguageDataSO`，Console 输出处理数量。 |
 | M03 | XLSX 导入 | 准备含 `Key` 表头的 XLSX，执行转换 | 多语言列导入到 `entries.texts`。 |
 | M04 | 无表头导入 | 第一个 sheet 第一列使用合法 Key，无 `Key` 表头 | 第一个 sheet 按标准表头导入，其余无 `Key` 表头 sheet 被跳过。 |

@@ -26,7 +26,7 @@ How to run:
 
 | # | Scenario | Steps | Expected |
 | --- | --- | --- | --- |
-| M01 | First-time setup | Run `Tools/Localization/Open Language Config` | Creates and selects `Assets/Settings/LanguageConfig.asset`. |
+| M01 | First-time setup | Run `Tools/Localization/Open Language Config` | Creates and selects `Assets/Resources/Localization/LanguageConfig.asset`. |
 | M02 | Incremental CSV import | Modify a CSV in the source folder, run `Convert Changed Source Files` | Only the changed source's `LanguageDataSO` is updated; Console logs the processed count. |
 | M03 | XLSX import | Prepare an XLSX with a `Key` header and run conversion | Language columns import into `entries.texts`. |
 | M04 | Headerless import | First column of the first sheet uses valid keys, no `Key` header | The first sheet imports with the standard header; sheets without a `Key` header are skipped. |

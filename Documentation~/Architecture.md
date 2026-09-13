@@ -8,6 +8,7 @@ The package is split into a Runtime layer and an Editor layer:
 
 - Runtime provides data structures, template parsing, language switching and Addressables loading.
 - Editor provides source import/export, the Inspector editing experience, batch conversion and data validation.
+- Editor implementation types are `internal`; the separate EditMode test assembly accesses them through a friend-assembly declaration without expanding the package API.
 
 Core data flow:
 

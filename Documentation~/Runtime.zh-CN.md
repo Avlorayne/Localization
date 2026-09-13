@@ -279,7 +279,7 @@ private static string[] BuildAddressCandidates(string requestedAddress)
 
 ### 3.1 LanguageConfigSO —— 语言清单
 
-`LanguageConfigSO.cs` 是你在项目里配置的那份“项目支持哪些语言”的 ScriptableObject（菜单 `Settings/Language Config`）：
+`LanguageConfigSO.cs` 是你在项目里配置的那份“项目支持哪些语言”的 ScriptableObject（菜单 `Settings/Language Config`）。通过包菜单 `Tools/Localization/Open Language Config` 创建时，默认路径为 `Assets/Resources/Localization/LanguageConfig.asset`，因为它属于运行时配置：
 
 ```csharp
 public class LanguageConfigSO : ScriptableObject

@@ -1,52 +1,73 @@
 using System;
 using Localization;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public sealed class BasicLocalizationExample : MonoBehaviour
 {
-    public static BasicLocalizationExample Instance { get; private set; }
+    private static BasicLocalizationExample _instance;
+    public static BasicLocalizationExample Instance
+    {
+        get
+        {
+            _instance ??= FindObjectOfType<BasicLocalizationExample>();
+            if (_instance == null)
+            {
+                GameObject go = new GameObject("Localization Component");
+                _instance = go.AddComponent<BasicLocalizationExample>();
+                _instance.config ??= Resources.Load<LanguageConfigSO>("Localization/LanguageConfig");
+                _instance._system ??= new LocalizationSystem(_instance.config);
+            }
 
-    [SerializeField] private LanguageConfigSO languageConfig;
+            return _instance;
+        }
+    }
+
+    [FormerlySerializedAs("languageConfig")]
+    public LanguageConfigSO config;
     [SerializeField] private string languageCode = "en";
 
-    private LocalizationSystem _localization;
+    private LocalizationSystem _system;
 
     private void Awake()
     {
-        Instance ??= this;
-        
-        if (languageConfig == null)
+        _instance = this;
+        config ??= Resources.Load<LanguageConfigSO>("Localization/LanguageConfig");
+
+        if (config == null)
         {
-            Debug.LogError("[BasicLocalizationExample] Assign a LanguageConfigSO first.", this);
+            Debug.LogError("[BasicLocalizationExample] Assign a LanguageConfigSO or place one at Resources/Localization/LanguageConfig.", this);
             enabled = false;
             return;
         }
 
-        _localization = new LocalizationSystem(languageConfig);
-        
-        _localization.SetLanguage(languageCode);
+        _system = new LocalizationSystem(config);
+        _system.SetLanguage(languageCode);
     }
 
-    public void AddListener(Action callback)
+    public void SetLanguage(string languageCode)
     {
-        _localization.OnLanguageChanged -= callback;
-        _localization.OnLanguageChanged += callback;
+        _system.SetLanguage(languageCode);
     }
 
-    public void RemoveListener(Action callback)
+    public string GetLanguageCode()
     {
-        _localization.OnLanguageChanged -= callback;
+        return _system.CurrentDefinition.code;
     }
 
-    public void SetLanguage(string code)
+    public string GetLocalizedText(string text)
     {
-        languageCode = code;
-        _localization?.SetLanguage(code);
+        return _system.GetLocalizedText(text);
     }
 
-    public string GetLocalizedText(string key)
+    public void AddListener(Action listener)
     {
-        return _localization?.GetLocalizedText(key);
+        _system.OnLanguageChanged -= listener;
+        _system.OnLanguageChanged += listener;
+    }
+
+    public void RemoveListener(Action listener)
+    {
+        _system.OnLanguageChanged -= listener;
     }
 }
-

@@ -27,7 +27,7 @@ namespace Localization
         public string[] ArgumentText { get; }
 
         public int Length => EndIndex - StartIndex + 1;
-        
+
         public LocalizationPlaceholder(
             int startIndex,
             int endIndex,

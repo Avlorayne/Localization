@@ -9,7 +9,7 @@ namespace Localization.Editor
     /// <summary>
     /// 探测 Unity 编辑器界面语言并映射到本地化语言 code，带 2 秒缓存避免频繁反射。
     /// </summary>
-    public static class LocalizationEditorLanguage
+    internal static class LocalizationEditorLanguage
     {
         private static int cachedLanguageIndex = -1;
         private static double lastLanguageCheck;

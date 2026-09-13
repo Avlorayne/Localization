@@ -9,9 +9,9 @@ using static Localization.Editor.LocalizationEditorText;
 
 namespace Localization.Editor
 {
-    public static class LocalizationSourceConverter
+    internal static class LocalizationSourceConverter
     {
-        private const string SettingsPath = "Assets/Settings/LanguageConfig.asset";
+        private const string ConfigurationPath = "Assets/Resources/Localization/LanguageConfig.asset";
         private const string HashesJsonPath = "Assets/Settings/LocalizationSourceHashes.json";
 
         // ---- Menu Items ----
@@ -40,21 +40,21 @@ namespace Localization.Editor
 
         internal static LanguageConfigSO GetOrCreateSettings()
         {
-            var settings = AssetDatabase.LoadAssetAtPath<LanguageConfigSO>(SettingsPath);
+            var settings = AssetDatabase.LoadAssetAtPath<LanguageConfigSO>(ConfigurationPath);
             if (settings == null)
             {
-                string dir = Path.GetDirectoryName(SettingsPath);
+                string dir = Path.GetDirectoryName(ConfigurationPath);
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
                 }
 
                 settings = ScriptableObject.CreateInstance<LanguageConfigSO>();
-                if(!Directory.Exists(settings.sourceFolderPath)) Directory.CreateDirectory(settings.sourceFolderPath);
-                AssetDatabase.CreateAsset(settings, SettingsPath);
+                if (!Directory.Exists(settings.sourceFolderPath)) Directory.CreateDirectory(settings.sourceFolderPath);
+                AssetDatabase.CreateAsset(settings, ConfigurationPath);
                 AssetDatabase.SaveAssets();
-                
-                Debug.Log(F("log.created.settings", SettingsPath));
+
+                Debug.Log(F("log.created.settings", ConfigurationPath));
             }
 
             return settings;

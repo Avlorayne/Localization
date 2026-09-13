@@ -7,7 +7,7 @@ using static Localization.Editor.LocalizationEditorText;
 
 namespace Localization.Editor
 {
-    public static class LanguageDataSODuplicateKeyValidator
+    internal static class LanguageDataSODuplicateKeyValidator
     {
         [MenuItem("Tools/Localization/Validate Duplicate Keys", priority = 22)]
         public static void ValidateDuplicateKeys()
@@ -169,7 +169,7 @@ namespace Localization.Editor
             cachedLanguageDataAssets = null;
         }
 
-        public sealed class DuplicateKeyReport
+        internal sealed class DuplicateKeyReport
         {
             public DuplicateKeyReport(string namespaceId, string key, List<DuplicateKeyOccurrence> occurrences)
             {
@@ -189,7 +189,7 @@ namespace Localization.Editor
             public List<string> AssetPaths { get; }
         }
 
-        public sealed class DuplicateKeyOccurrence
+        internal sealed class DuplicateKeyOccurrence
         {
             public DuplicateKeyOccurrence(string assetPath, string namespaceId)
             {

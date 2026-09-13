@@ -1,13 +1,16 @@
 #if UNITY_EDITOR
 using System;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
 using static Localization.Editor.LocalizationEditorText;
 
+[assembly: InternalsVisibleTo("Dotline.Localization.Editor.Tests")]
+
 namespace Localization.Editor
 {
     [CustomEditor(typeof(LanguageConfigSO))]
-    public class LanguageConfigSOEditor : UnityEditor.Editor
+    internal class LanguageConfigSOEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

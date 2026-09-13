@@ -6,6 +6,8 @@
 
 历史默认值和地址候选都兼容 Resources 风格路径。当前运行时实际通过 Addressables 加载资产；当 `LanguageDataSO` 通过 Key、重复 Key 和内容占位符校验后，工具会自动将其加入 `Localization` Addressables 分组，并将地址设为其 `NamespaceId`。
 
+`LanguageConfigSO` 也由包菜单默认创建在 `Assets/Resources/Localization`，因为它是运行时配置而不是仅 Editor 使用的状态。源文件哈希缓存仍放在 `Assets/Settings`，因为它只属于 Editor 数据。
+
 ## 为什么运行时提示找不到 Addressable language data？
 
 常见原因是数据未通过合法性校验，或 Addressables 地址和命名空间不一致。自动注册使用 `NamespaceId` 作为地址；仍建议让 `LanguageDataSO` 资产名和 `NamespaceId` 保持一致，例如都使用 `UI`。

@@ -174,12 +174,14 @@ namespace Localization
                     case ',':
                         if (angleDepth == 0 && parenthesisDepth == 0)
                         {
-                            if (!TryParseArgument(argumentText.Substring(startIndex, i - startIndex), out string argument))
+                            if (!TryParseArgument(argumentText.Substring(startIndex, i - startIndex),
+                                    out string argument))
                                 return null;
 
                             arguments.Add(argument);
                             startIndex = i + 1;
                         }
+
                         break;
                 }
             }

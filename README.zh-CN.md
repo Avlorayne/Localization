@@ -1,6 +1,6 @@
 # Unity 本地化包（Localization）
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.3-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
@@ -36,7 +36,7 @@
 **方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.2
+https://github.com/Avlorayne/Localization.git#1.0.3
 ```
 
 或直接在 `Packages/manifest.json` 中添加：
@@ -44,7 +44,7 @@ https://github.com/Avlorayne/Localization.git#1.0.2
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.2"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.3"
   }
 }
 ```
@@ -135,7 +135,7 @@ https://github.com/Avlorayne/Localization.git#1.0.2
 
 ### 首次配置
 
-执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Settings/LanguageConfig.asset`：
+执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Resources/Localization/LanguageConfig.asset`：
 ![打开 Localization 菜单](screenshots/open_settins.png)
 ![LanguageConfig](screenshots/lang_config.png)
 
@@ -155,21 +155,30 @@ https://github.com/Avlorayne/Localization.git#1.0.2
 ### 运行时 API
 
 ```csharp
-using Localization;
 using UnityEngine;
 
 public sealed class LocalizedLabelExample : MonoBehaviour
 {
-    [SerializeField] private LanguageConfigSO languageConfig;
-
-    private LocalizationSystem localization;
+    private BasicLocalizationExample localization;
 
     private void Awake()
     {
-        localization = new LocalizationSystem(languageConfig);
+        localization = BasicLocalizationExample.Instance;
         localization.SetLanguage("en");
+        Debug.Log($"Language: {localization.GetLanguageCode()}");
         Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
-        localization.OnLanguageChanged += RefreshAllTexts; // 切换语言后刷新 UI
+        localization.AddListener(RefreshAllTexts); // 切换语言后刷新 UI
+    }
+
+    private void OnDestroy()
+    {
+        if (localization != null)
+            localization.RemoveListener(RefreshAllTexts);
+    }
+
+    private void RefreshAllTexts()
+    {
+        Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
     }
 }
 ```
@@ -180,7 +189,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
   localization.GetLocalizedText($"<UI|WELCOME(<UI|PLAYER_NAME>, \"{name}\")>");
   ```
 - 运行时会按命名空间名、`Localization/<name>` 约定和默认的 `Assets/Resources/Localization/<name>.asset` 路径解析地址。按默认配置使用时无需手动管理这些地址。
-- 语言切换后需要刷新的 UI，统一挂 `LocalizationSystem.OnLanguageChanged`。
+- 使用示例门面时，语言切换后的 UI 刷新统一通过 `BasicLocalizationExample.AddListener` 注册，并用 `RemoveListener` 移除同一个回调。
 
 ### WebGL 注意
 
@@ -209,6 +218,35 @@ public sealed class LocalizedLabelExample : MonoBehaviour
 ## 示例
 
 在 Package Manager 的包详情页 Samples 区域导入 **Basic Localization Example**。导入后会得到一个最小 CSV 源文件和 `BasicLocalizationExample` 脚本，演示配置、转换与运行时查询。
+
+导入后的示例工程包含：
+
+- `SampleScene`：已经挂载 `BasicLocalizationExample` 和文本示例组件。
+- `UI.csv`：最小化本地化源文件。
+- `Resources/Localization/LanguageConfig.asset`：未手动指定配置时，运行时会自动加载。
+
+使用步骤：
+
+1. 打开导入后的 `BasicExample` 文件夹，选中 `Resources/Localization/LanguageConfig.asset`。
+2. 将 `sourceFolderPath` 指向 `UI.csv` 所在目录；将 `soFolderPath` 保持为 `Assets/Resources/Localization` 或项目约定的输出目录。
+3. 确认宿主项目已经初始化 Addressables，然后执行 `Tools/Localization/Convert All Source Files`。
+4. 打开 `SampleScene` 并运行。生成的本地化资源会自动加入 `Localization` Addressables 分组。
+
+`BasicLocalizationExample` 为场景脚本提供了简单的单例入口：
+
+```csharp
+BasicLocalizationExample localization = BasicLocalizationExample.Instance;
+localization.SetLanguage("en");
+
+string languageCode = localization.GetLanguageCode();
+string text = localization.GetLocalizedText("<UI|START_GAME>");
+
+localization.AddListener(RefreshTexts);
+// 不再需要时移除同一个回调：
+// localization.RemoveListener(RefreshTexts);
+```
+
+示例配置位于 `Resources/Localization`，因此运行时默认通过 `Resources.Load<LanguageConfigSO>("Localization/LanguageConfig")` 加载。
 
 ## 已知限制
 

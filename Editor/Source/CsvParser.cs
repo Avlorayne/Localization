@@ -8,7 +8,7 @@ using static Localization.Editor.LocalizationEditorText;
 #if UNITY_EDITOR
 namespace Localization.Editor
 {
-    public static class CsvParser
+    internal static class CsvParser
     {
         // GB18030 是 GBK/GB2312 的超集，作为无 BOM 且非 UTF-8 的 CSV 的回退编码（简中 Excel 另存 ANSI 的典型情况）。
         private const string FallbackEncodingName = "GB18030";

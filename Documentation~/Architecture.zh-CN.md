@@ -8,6 +8,7 @@
 
 - Runtime 提供数据结构、模板解析、语言切换和 Addressables 加载。
 - Editor 提供源文件导入导出、Inspector 编辑体验、批量转换和数据校验。
+- Editor 实现类型统一为 `internal`；独立的 EditMode 测试程序集通过友元程序集声明访问，不扩大包的公开 API。
 
 核心数据流：
 

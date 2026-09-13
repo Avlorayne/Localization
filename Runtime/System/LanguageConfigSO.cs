@@ -9,8 +9,9 @@ namespace Localization
     {
         public string sourceFolderPath = "Assets/Editor/Text Files/Localization";
         public string soFolderPath = "Assets/Resources/Localization";
-        
+
         public string defaultLanguage = "zh-Hans";
+
         public List<LanguageDefinition> languages = new()
         {
             new() { code = "zh-Hans", displayName = "简体中文", fallbackLanguage = "en" },
@@ -19,8 +20,9 @@ namespace Localization
             new() { code = "ja", displayName = "日本語", fallbackLanguage = "en" },
             new() { code = "ko", displayName = "한국어", fallbackLanguage = "en" },
         };
-        private Dictionary<string, LanguageDefinition> _languageDict = new ();
-        
+
+        private Dictionary<string, LanguageDefinition> _languageDict = new();
+
         public LanguageDefinition GetDefinition(string languageCode)
         {
             if (_languageDict.Count == 0)

@@ -12,7 +12,7 @@ using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 namespace Localization.Editor
 {
-    public static class XlsxLocalizationExporter
+    internal static class XlsxLocalizationExporter
     {
         private static readonly XNamespace SpreadsheetNs = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
 
@@ -72,12 +72,12 @@ namespace Localization.Editor
                         .GroupBy(entry => entry.key, StringComparer.OrdinalIgnoreCase)
                         .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
 
-            var exportedKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            bool foundLocalizationSheet = false;
-            List<KeyValuePair<string, Func<LocalizationData, string>>> exportFields = BuildExportFields();
+                    var exportedKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    bool foundLocalizationSheet = false;
+                    List<KeyValuePair<string, Func<LocalizationData, string>>> exportFields = BuildExportFields();
 
-            foreach (ZipArchiveEntry inputEntry in inputArchive.Entries)
-            {
+                    foreach (ZipArchiveEntry inputEntry in inputArchive.Entries)
+                    {
                         ZipArchiveEntry outputEntry =
                             outputArchive.CreateEntry(inputEntry.FullName, CompressionLevel.Optimal);
                         CopyEntryMetadata(inputEntry, outputEntry);

@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Localization.Editor
 {
     /// <summary>一种本地化语言的源文件列定义：规范表头 + 读写条目字段的委托。</summary>
-    public readonly struct LocalizationLanguageColumn
+    internal readonly struct LocalizationLanguageColumn
     {
         public LocalizationLanguageColumn(
             string header,
@@ -51,7 +51,7 @@ namespace Localization.Editor
     /// 本地化源文件（CSV/XLSX）的规范表头与表头→字段映射。
     /// CSV 与 XLSX 两个导入器共用；语言列与顺序优先由工程中的 LanguageConfigSO.languages 驱动。
     /// </summary>
-    public static class LocalizationSourceSchema
+    internal static class LocalizationSourceSchema
     {
         private static readonly LocalizationLanguageColumn[] FallbackLanguageColumns =
         {
@@ -345,7 +345,8 @@ namespace Localization.Editor
         internal static bool LanguageIdsEqual(string left, string right)
         {
             return string.Equals(left?.Trim(), right?.Trim(), StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(NormalizeLanguageId(left), NormalizeLanguageId(right), StringComparison.OrdinalIgnoreCase);
+                   string.Equals(NormalizeLanguageId(left), NormalizeLanguageId(right),
+                       StringComparison.OrdinalIgnoreCase);
         }
 
         internal static string GetDisplayName(string languageCode, string displayName)
@@ -395,7 +396,7 @@ namespace Localization.Editor
         }
     }
 
-    public readonly struct EmbeddedLocalizationKeyViolation
+    internal readonly struct EmbeddedLocalizationKeyViolation
     {
         public EmbeddedLocalizationKeyViolation(
             string entryKey,

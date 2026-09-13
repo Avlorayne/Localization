@@ -83,6 +83,7 @@ namespace Localization
                 if (data.TryGet(languageDefinition.code, _defaultLanguage, out result)) return true;
                 if (data.TryGet(languageDefinition.fallbackLanguage, _defaultLanguage, out result)) return true;
             }
+
             Debug.LogWarning($"[Localization] No such key '{key}' or language '{languageDefinition.displayName}'");
             return false;
         }

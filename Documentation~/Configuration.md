@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `name` | `com.dotline.localization` | UPM package name. Should not change after release. |
 | `displayName` | `Localization` | Name shown in the Package Manager. |
-| `version` | `1.0.0` | Semantic version. Update together with public API or data format changes. |
+| `version` | `1.0.3` | Semantic version. Update together with public API or data format changes. |
 | `license` / `type` | `MIT` / `tool` | License and package type. |
 | `unity` | `2022.3` | Minimum Unity version. |
 | `dependencies.com.unity.addressables` | `1.22.3` | Runtime loads `LanguageDataSO` through Addressables. |
@@ -16,7 +16,7 @@
 
 ## LanguageConfigSO
 
-Created via `Create > Settings > Language Config`, or `Tools/Localization/Open Language Config`.
+Created via `Create > Settings > Language Config`, or `Tools/Localization/Open Language Config`. The package menu stores the asset at `Assets/Resources/Localization/LanguageConfig.asset` by default so runtime code can load it from `Resources`.
 
 | Field | Default | Description |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ Rules:
 
 | Menu | Behavior |
 | --- | --- |
-| `Tools/Localization/Open Language Config` | Opens or creates `Assets/Settings/LanguageConfig.asset`. |
+| `Tools/Localization/Open Language Config` | Opens or creates `Assets/Resources/Localization/LanguageConfig.asset`. |
 | `Tools/Localization/Convert Changed Source Files` | Converts only changed items based on source file and SO hashes. |
 | `Tools/Localization/Convert All Source Files` | Forces conversion of all `.csv` and `.xlsx` source files. |
 | `Tools/Localization/Validate Duplicate Keys` | Scans all `LanguageDataSO` assets for duplicate keys per namespace. |

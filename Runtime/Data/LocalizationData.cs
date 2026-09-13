@@ -28,6 +28,7 @@ namespace Localization
                 if (localizationText.languageCode == defaultLang)
                     result = localizationText.text;
             }
+
             // 查找
             foreach (var localizationText in texts)
             {
