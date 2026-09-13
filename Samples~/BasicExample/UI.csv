@@ -1,0 +1,5 @@
+Key,zh-Hans,zh-Hant,en,ja,ko,Comment
+START_GAME,开始游戏,開始遊戲,Start Game,ゲーム開始,게임 시작,Main menu start button
+PLAYER_NAME,队长,隊長,Captain,キャプテン,캡틴,Demo player name
+WELCOME,欢迎 {0},歡迎 {0},Welcome {0},{0} ようこそ,{0} 환영합니다,Template with one argument
+
