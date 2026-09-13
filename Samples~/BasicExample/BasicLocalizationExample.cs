@@ -42,17 +42,17 @@ public sealed class BasicLocalizationExample : MonoBehaviour
         }
 
         _system = new LocalizationSystem(config);
-        _system.SetLanguage(languageCode);
+        _system.CurrentLanguageCode = languageCode;
     }
 
     public void SetLanguage(string languageCode)
     {
-        _system.SetLanguage(languageCode);
+        _system.CurrentLanguageCode = languageCode;
     }
 
     public string GetLanguageCode()
     {
-        return _system.CurrentDefinition.code;
+        return _system.CurrentLanguageCode;
     }
 
     public string GetLocalizedText(string text)

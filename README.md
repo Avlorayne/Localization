@@ -78,9 +78,9 @@ No code involved. Your daily routine is three steps:
 2. In Unity, run **Tools → Localization → Convert Changed Source Files** (only converts sheets that changed);
 3. Done. The generated text assets are registered to Addressables automatically and are immediately available to the programmers.
 
-![Where source files live](screenshots/place_source_files.png)
-![Run the conversion](screenshots/convert_files.png)
-![LanguageDataSO Inspector](screenshots/dataso_inspector.png)
+![Where source files live](screenshots/place_source_files.png)  
+![Run the conversion](screenshots/convert_files.png)  
+![LanguageDataSO Inspector](screenshots/dataso_inspector.png)  
 
 ### How to fill in the sheet
 
@@ -136,6 +136,7 @@ The generated `LanguageDataSO` assets can be searched, added, edited and deleted
 ### First-time configuration
 
 Run **Tools → Localization → Open Language Config** to create or open `Assets/Resources/Localization/LanguageConfig.asset`:
+
 ![Open the Localization menu](screenshots/open_settins.png)
 ![LanguageConfig](screenshots/lang_config.png)
 

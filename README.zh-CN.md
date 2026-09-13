@@ -78,9 +78,9 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 2. 回到 Unity，执行 **Tools → Localization → Convert Changed Source Files**（只转换改过的表）；
 3. 完成。生成的文本资产会自动进入 Addressables，程序那边立即可用。
 
-![源文件放置位置](screenshots/place_source_files.png)
-![执行转换](screenshots/convert_files.png)
-![LanguageDataSO Inspector](screenshots/dataso_inspector.png)
+![源文件放置位置](screenshots/place_source_files.png)  
+![执行转换](screenshots/convert_files.png)  
+![LanguageDataSO Inspector](screenshots/dataso_inspector.png)  
 
 ### 表格怎么填
 
@@ -135,7 +135,8 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 
 ### 首次配置
 
-执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Resources/Localization/LanguageConfig.asset`：
+执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Resources/Localization/LanguageConfig.asset`：  
+
 ![打开 Localization 菜单](screenshots/open_settins.png)
 ![LanguageConfig](screenshots/lang_config.png)
 

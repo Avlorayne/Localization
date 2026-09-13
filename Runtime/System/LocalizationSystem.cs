@@ -8,35 +8,39 @@ namespace Localization
     {
         private LocalizationLookup _lookup;
         private LanguageConfigSO _languageConfig;
-        public LanguageDefinition CurrentDefinition { get; private set; }
-        
+        private LanguageDefinition _currentDefinition;
+
         public Action OnLanguageChanged;
-        
+
         public LocalizationSystem(LanguageConfigSO languageConfig)
         {
             _languageConfig = languageConfig;
             _lookup = new LocalizationLookup(_languageConfig.defaultLanguage);
         }
-        
-        public void SetLanguage(string languageCode)
-        {
-            var newDefinition = _languageConfig.GetDefinition(languageCode);
-            if (newDefinition == null)
-            {
-                Debug.LogWarning($"[LocalizationSystem] Cannot set language {languageCode} because it does not exist");
-                return;
-            }
 
-            if (newDefinition != CurrentDefinition)
+        public string CurrentLanguageCode
+        {
+            get => _currentDefinition.code;
+            set
             {
-                CurrentDefinition = newDefinition;
-                OnLanguageChanged?.Invoke();
+                var newDefinition = _languageConfig.GetDefinition(value);
+                if (newDefinition == null)
+                {
+                    Debug.LogWarning($"[LocalizationSystem] Cannot set language {value} because it does not exist");
+                    return;
+                }
+
+                if (newDefinition != _currentDefinition)
+                {
+                    _currentDefinition = newDefinition;
+                    OnLanguageChanged?.Invoke();
+                }
             }
         }
-        
+
         public string GetLocalizedText(string template)
         {
-           return LocalizationTemplateResolver.Resolve(template, CurrentDefinition, _lookup);
+            return LocalizationTemplateResolver.Resolve(template, _currentDefinition, _lookup);
         }
     }
 }
