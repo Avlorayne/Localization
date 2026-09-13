@@ -90,6 +90,13 @@ namespace Localization.Editor
         /// <summary>按规范表头名（大小写不敏感）把值写入条目对应字段；Comment 表头走 IsCommentHeader 语义判断；未知表头告警一次并忽略。</summary>
         public static void ApplyField(ref LocalizationData data, string header, string value)
         {
+            if (header.Equals("Key", StringComparison.OrdinalIgnoreCase))
+            {
+                // CsvParser normalizes and assigns the key before applying the remaining fields.
+                // Keep that normalized value instead of writing the raw CSV cell back.
+                return;
+            }
+
             if (TryGetLanguageColumn(header, out LocalizationLanguageColumn column))
             {
                 column.SetValue(ref data, value);
