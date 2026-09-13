@@ -1,52 +1,50 @@
-# 测试用例
+# Testing
 
-## 自动化测试
+**English** | [简体中文](Testing.zh-CN.md)
 
-EditMode 测试位于 `Tests/Editor`，测试程序集为 `Localization.Editor.Tests`。
+## Automated tests
 
-运行方式：
+EditMode tests live in `Tests/Editor`, assembly `Dotline.Localization.Editor.Tests`.
 
-1. 打开 Unity Test Runner。
-2. 选择 EditMode。
-3. 运行 `Localization.Editor.Tests`。
+How to run:
 
-命令行示例：
+1. Put the package into a host project (embedded under `Packages/` or referenced via Git URL).
+2. Open the Unity Test Runner (Window → General → Test Runner).
+3. Select EditMode and run `Dotline.Localization.Editor.Tests`.
 
-```powershell
-Unity.exe -batchmode -projectPath "F:\Project\Unity\Localization" -runTests -testPlatform EditMode -testResults "TestResults.xml" -quit
-```
+## Covered cases
 
-## 已覆盖用例
-
-| 用例 | 目标 |
+| Suite | Target |
 | --- | --- |
-| `LocalizationKeyUtilityTests` | 校验 Key 命名规则、括号备注裁剪、显示型 Key 判断。 |
-| `LocalizationTemplateParserTests` | 校验基础占位符、嵌套参数、TMP 标签忽略、嵌套 Key 检测。 |
-| `LocalizationDataTests` | 校验语言文本命中和空文本失败。 |
-| `LocalizationSourceHeadersTests` | 校验注释列表头别名。 |
+| `LocalizationKeyUtilityTests` | Key naming rules, bracket-note trimming, display-key detection. |
+| `LocalizationTemplateParserTests` | Basic placeholders, nested arguments, TMP tag skipping, nested-key detection. |
+| `LocalizationDataTests` | Language text hits and empty-text failures. |
+| `LanguageConfigSOTests` | Requested language lookup, one-level fallback and default-language fallback. |
+| `LocalizationSourceHeadersTests` | Comment column header aliases. |
 
-## 人工验收用例
+## Manual acceptance cases
 
-| 编号 | 场景 | 步骤 | 预期 |
+| # | Scenario | Steps | Expected |
 | --- | --- | --- | --- |
-| M01 | 初次配置 | 执行 `Tools/Localization/Open Language Config` | 创建并选中 `Assets/Settings/LanguageConfig.asset`。 |
-| M02 | CSV 增量导入 | 修改源目录中的 CSV，执行 `Convert Changed Source Files` | 只更新变更源对应的 `LanguageDataSO`，Console 输出处理数量。 |
-| M03 | XLSX 导入 | 准备含 `Key` 表头的 XLSX，执行转换 | 多语言列导入到 `entries.texts`。 |
-| M04 | 无表头导入 | 第一个 sheet 第一列使用合法 Key，无 `Key` 表头 | 第一个 sheet 按标准表头导入，其余无 `Key` 表头 sheet 被跳过。 |
-| M05 | 重复 Key | 在同命名空间两个 SO 中创建同名 Key，执行校验 | Console 报致命错误并列出冲突文件。 |
-| M06 | 非法 Key | 在 Inspector 中输入小写或包含空格的 Key | Inspector 高亮并输出非法 Key 错误。 |
-| M07 | 内容误填 Key | 在语言文本中输入 `<UI|START_GAME>` | Inspector 高亮内容字段并输出致命错误。 |
-| M08 | 导出 CSV | 在 `LanguageDataSO` Inspector 点击导出，选择 `.csv` | 文件以 UTF-8 BOM 写出，并包含标准表头。 |
-| M09 | 导出 XLSX | 在 `LanguageDataSO` Inspector 点击导出，选择现有 `.xlsx` | 保留工作簿结构，更新匹配 Key，并追加缺失 Key。 |
-| M10 | 自动 Addressables 注册 | 导入或在 Inspector 中修正 DataSO，直到不再有 Key、重复 Key 或内容占位符错误 | 自动创建/复用 `Localization` 分组；DataSO 以 `NamespaceId` 为地址加入该分组。 |
-| M11 | 运行时查询 | 调用 `<UI|START_GAME>` | 返回当前语言文本，缺失语言尝试 fallback。 |
-| M12 | 嵌套模板 | 调用 `<UI|WELCOME(<UI|PLAYER_NAME>)>` | 先解析参数，再替换子模板 `{0}`。 |
-| M13 | WebGL 同步限制 | 在 WebGL Player 首次同步查询未缓存资源 | 记录错误，提醒使用异步加载路径。 |
+| M01 | First-time setup | Run `Tools/Localization/Open Language Config` | Creates and selects `Assets/Settings/LanguageConfig.asset`. |
+| M02 | Incremental CSV import | Modify a CSV in the source folder, run `Convert Changed Source Files` | Only the changed source's `LanguageDataSO` is updated; Console logs the processed count. |
+| M03 | XLSX import | Prepare an XLSX with a `Key` header and run conversion | Language columns import into `entries.texts`. |
+| M04 | Headerless import | First column of the first sheet uses valid keys, no `Key` header | The first sheet imports with the standard header; sheets without a `Key` header are skipped. |
+| M05 | Duplicate keys | Create the same key in two SOs of the same namespace, run validation | Console logs a fatal error and lists the conflicting files. |
+| M06 | Invalid key | Enter a lowercase or space-containing key in the Inspector | The Inspector highlights it and logs an invalid-key error. |
+| M07 | Key in content | Enter `<UI|START_GAME>` as language text | The Inspector highlights the content field and logs a fatal error. |
+| M08 | CSV export | Click export in the `LanguageDataSO` Inspector and choose `.csv` | File is written with UTF-8 BOM and the standard header. |
+| M09 | XLSX export | Click export in the `LanguageDataSO` Inspector and choose an existing `.xlsx` | Workbook structure is preserved; matching keys are updated and missing keys appended. |
+| M10 | Automatic Addressables registration | Import or fix a DataSO in the Inspector until no key, duplicate-key or content-placeholder errors remain | The `Localization` group is created/reused; the DataSO joins it addressed by `NamespaceId`. |
+| M11 | Runtime lookup | Call `<UI|START_GAME>` | Returns the current language's text; missing languages fall back. |
+| M12 | Nested template | Call `<UI|WELCOME(<UI|PLAYER_NAME>)>` | Arguments resolve first, then the child template's `{0}` is replaced. |
+| M13 | WebGL sync limitation | First synchronous lookup of an uncached namespace in a WebGL player | The limitation is documented; the current public API does not provide an async/preload recovery path. |
+| M14 | Default fallback | Configure `fr -> en` with `zh-Hans` as default, omit the key from `fr` and `en`, and query in `fr` | The `zh-Hans` text is returned; `en`'s fallback is not followed recursively. |
 
-## 发布前检查
+## Pre-release checklist
 
-- 所有 EditMode 测试通过。
-- Package Manager 能正确显示 README、Samples 和依赖。
-- 导入 `Basic Localization Example` 后脚本无编译错误。
-- `Third Party Notices.md` 覆盖嵌入的 Superpower 与 ExcelDataReader。
-- `package.json` 版本与 `CHANGELOG.md` 一致。
+- All EditMode tests pass.
+- The Package Manager correctly displays the README, Samples and dependencies.
+- `Basic Localization Example` imports without script compile errors.
+- `Third Party Notices.md` covers the embedded Superpower and ExcelDataReader.
+- The `package.json` version matches `CHANGELOG.md`.

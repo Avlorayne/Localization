@@ -1,13 +1,15 @@
-# 技术架构说明
+# Architecture
 
-## 总览
+**English** | [简体中文](Architecture.zh-CN.md)
 
-本包分为 Runtime 与 Editor 两层：
+## Overview
 
-- Runtime 提供数据结构、模板解析、语言切换和 Addressables 加载。
-- Editor 提供源文件导入导出、Inspector 编辑体验、批量转换和数据校验。
+The package is split into a Runtime layer and an Editor layer:
 
-核心数据流：
+- Runtime provides data structures, template parsing, language switching and Addressables loading.
+- Editor provides source import/export, the Inspector editing experience, batch conversion and data validation.
+
+Core data flow:
 
 ```text
 CSV/XLSX source
@@ -18,41 +20,54 @@ CSV/XLSX source
   -> LocalizationSystem.GetLocalizedText(template)
 ```
 
-## Assembly 边界
+## Assembly boundaries
 
-| Assembly | 路径 | 职责 | 依赖 |
+| Assembly | Path | Responsibility | Dependencies |
 | --- | --- | --- | --- |
-| `Dotline.Localization` | `Runtime/Dotline.Localization.asmdef` | Runtime API、模板解析、语言数据、Addressables 加载。 | `Unity.Addressables`, `Unity.ResourceManager` |
-| `Dotline.Localization.Editor` | `Editor/Dotline.Localization.Editor.asmdef` | 菜单、Inspector、CSV/XLSX 导入导出、校验。 | `Dotline.Localization`, UnityEditor |
-| `Dotline.Localization.Editor.Tests` | `Tests/Editor/Dotline.Localization.Editor.Tests.asmdef` | EditMode 自动化测试。 | `Dotline.Localization`, `Dotline.Localization.Editor`, Unity Test Framework |
+| `Dotline.Localization` | `Runtime/Dotline.Localization.asmdef` | Runtime API, template parsing, language data, Addressables loading. | `Unity.Addressables`, `Unity.ResourceManager` |
+| `Dotline.Localization.Editor` | `Editor/Dotline.Localization.Editor.asmdef` | Menus, Inspectors, CSV/XLSX import/export, validation. | `Dotline.Localization`, UnityEditor |
+| `Dotline.Localization.Editor.Tests` | `Tests/Editor/Dotline.Localization.Editor.Tests.asmdef` | EditMode automated tests. | `Dotline.Localization`, `Dotline.Localization.Editor`, Unity Test Framework |
 
-## Runtime 模块
+## Runtime modules
 
-| 模块 | 说明 |
+| Module | Description |
 | --- | --- |
-| `LanguageConfigSO` | 项目语言配置与 fallback 定义。 |
-| `LanguageDataSO` | 命名空间化语言表，保存 `LocalizationData` 列表。 |
-| `LocalizationData` | 单个 Key 的多语言文本和注释。 |
-| `LocalizationTemplateParser` | 基于 Superpower 解析 `<Namespace|KEY(args)>` 占位符。 |
-| `LocalizationTemplateResolver` | 递归解析占位符，并把参数应用到 `{0}`、`{1}`。 |
-| `LocalizationLookup` | 按命名空间懒加载并缓存 `LanguageDataSO`，大小写不敏感查询。 |
-| `LanguageDataLoader` | Addressables 同步/异步加载与 handle 缓存。 |
+| `LanguageConfigSO` | Project language configuration and fallback definitions. |
+| `LanguageDataSO` | Namespaced language table holding a list of `LocalizationData`. |
+| `LocalizationData` | Multilingual texts and comment for a single key. |
+| `LocalizationTemplateParser` | Superpower-based parser for `<Namespace|KEY(args)>` placeholders. |
+| `LocalizationTemplateResolver` | Recursively resolves placeholders and applies arguments to `{0}`, `{1}`. |
+| `LocalizationLookup` | Lazily loads and caches `LanguageDataSO` per namespace; case-insensitive lookup. |
+| `LanguageDataLoader` | Addressables synchronous/async loading with handle caching. |
+| `LocalizationKeyUtility` | Key naming-rule validation and normalization (uppercase snake case, bracket-note trimming, display-key detection). |
 
-## Editor 模块
+## Editor modules
 
-| 模块 | 说明 |
-| --- | --- |
-| `LocalizationSourceConverter` | 扫描源目录，按哈希增量转换 CSV/XLSX 到 SO。 |
-| `CsvParser` | 字符级 CSV 解析，支持引号、逗号、多行字段、UTF-8 BOM 和 GB18030 fallback。 |
-| `XlsxLocalizationParser` | 使用 ExcelDataReader 读取 XLSX，多 sheet 导入。 |
-| `XlsxLocalizationExporter` | 使用 OpenXML ZIP 结构更新现有工作簿或创建新工作簿。 |
-| `LocalizationSourceSchema` | 标准表头、语言列映射、字段读写、内容校验。 |
-| `LanguageDataSOEditor` | UI Toolkit Inspector，可编辑、导入、导出、筛选和高亮错误。 |
-| `LanguageDataSODuplicateKeyValidator` | 扫描同一命名空间下的重复 Key。 |
+Grouped by subfolder:
 
-## 模板解析
+| Module | Path | Description |
+| --- | --- | --- |
+| `LocalizationCSVConverter` | `Editor/Core` | Scans the source folder and converts CSV/XLSX to SOs incrementally based on source-file + asset hashes. |
+| `LanguageConfigSOEditor` | `Editor/Core` | Custom Inspector for `LanguageConfigSO`. |
+| `LanguageDataSOAddressableRegistrar` | `Editor/Core` | Auto-registers validated `LanguageDataSO` assets into the `Localization` Addressables group, addressed by `NamespaceId`. |
+| `LocalizationEditorLanguage` | `Editor/Core` | Detects the Unity editor UI language and maps it to a localization language code (cached). |
+| `LocalizationEditorText` | `Editor/Core` | Multilingual text table for the editor UI (en/zh-Hans/zh-Hant/ja/ko). |
+| `LanguageDataSOEditor` | `Editor/Inspector` | UI Toolkit Inspector: editing, import, export, filtering and error highlighting. |
+| `LanguageDataSODuplicateKeyValidator` | `Editor/Inspector` | Scans for duplicate keys within the same namespace. |
+| `LanguageDataSOPathService` | `Editor/Inspector` | Source path resolution and normalization: in-project paths stored as `Assets/...`, external paths as absolute paths. |
+| `LocalizationSourceParser` | `Editor/Source` | Parses CSV/XLSX source files into `LocalizationData[]`. |
+| `LocalizationSourceSchema` | `Editor/Source` | Standard headers, language column mapping, field read/write, content validation. |
+| `LocalizationSourceHeaders` | `Editor/Source` | Semantic detection of source headers (Key/language/comment column aliases). |
+| `LocalizationSourceExporter` | `Editor/Source` | Exports `LocalizationData` lists back to CSV/XLSX source files. |
+| `CsvParser` | `Editor/Source` | Character-level CSV parsing and export: quotes, commas, multiline fields, UTF-8 BOM and GB18030 fallback. |
+| `XlsxLocalizationParser` | `Editor/Source` | Reads XLSX via ExcelDataReader with multi-sheet import. |
+| `XlsxLocalizationExporter` | `Editor/Source` | Updates existing workbooks or creates new ones via OpenXML. |
+| `OpenXmlWorkbookBuilder` | `Editor/Source` | Builds the OpenXML ZIP structure used by XLSX export. |
+| `LocalizationSourceFileAccess` | `Editor/Source` | Reads source files with shared read access to avoid file-lock conflicts with Excel etc. |
 
-模板占位符必须显式声明命名空间：
+## Template parsing
+
+Template placeholders must declare a namespace explicitly:
 
 ```text
 <UI|START_GAME>
@@ -60,26 +75,26 @@ CSV/XLSX source
 <UI|WELCOME(<UI|PLAYER_NAME>, "Playing")>
 ```
 
-解析器支持括号和尖括号的平衡匹配，所以参数中可以继续嵌套本地化模板。文本参数必须使用双引号，解析后会移除外层双引号；裸参数仅支持数值。解析失败的片段会保留为普通文本，这样 TMP rich text 和用户文本不会被破坏。
+The parser supports balanced matching of parentheses and angle brackets, so arguments can nest localization templates. Text arguments must use double quotes; the outer quotes are stripped after parsing. Bare arguments support numbers only. Fragments that fail to parse are kept as plain text, so TMP rich text and user content are never broken.
 
-## 数据一致性策略
+## Data consistency policy
 
-- 源文件导入后会规范化语言列，确保每条数据包含当前配置中的语言代码。
-- 同一命名空间内重复 Key 会报错，并以后加载的数据覆盖先前数据。
-- 源内容内如果包含 `<Namespace|KEY>` 形式占位符，会被视为内容错误，避免翻译结果再次间接引用 Key。
-- 删除源文件时只清理哈希记录，不自动删除 SO。
+- After import, language columns are normalized so every entry contains all language codes from the current configuration.
+- Duplicate keys within the same namespace raise errors; later-loaded data overwrites earlier data.
+- `<Namespace|KEY>` placeholders inside text content are treated as content errors, preventing translations from referencing keys indirectly.
+- Deleting a source file only cleans up its hash record; the SO is never removed automatically.
 
-## 地址与缓存
+## Addresses & caching
 
-Runtime 使用 Addressables 加载 `LanguageDataSO`，并维护：
+At runtime, `LanguageDataSO` is loaded through Addressables, maintaining:
 
-- `ResolvedAddresses`: 请求名到实际 Addressables 地址的解析缓存。
-- `CachedHandles`: Addressables handle 缓存。
-- `CachedResources`: 已加载 SO 缓存。
+- `ResolvedAddresses`: cache of requested name → actual Addressables address.
+- `CachedHandles`: cache of Addressables handles.
+- `CachedResources`: cache of loaded SOs.
 
-需要释放缓存时调用内部 `ReleaseCachedDataResources`。如果未来要提供公共释放 API，建议在 `LocalizationSystem` 或专门的 runtime facade 上暴露。
+The cache release method is internal and is not part of the public package API. If callers need explicit cache lifecycle control in the future, expose it on `LocalizationSystem` or a dedicated runtime facade.
 
-## 工程环境
+## Development environment
 
 - Unity: `2022.3.62f3c1`
 - Test Framework: `com.unity.test-framework` `1.1.33`

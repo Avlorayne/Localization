@@ -21,7 +21,7 @@ namespace Localization
             _defaultLanguage = defaultLanguage;
         }
 
-        private void AddData(LanguageDataSO source)
+        internal void AddData(LanguageDataSO source)
         {
             if (source == null)
                 return;
@@ -73,7 +73,7 @@ namespace Localization
                 }
                 else
                 {
-                    Debug.LogError($"[Localization] Duplicate namespace '{nameSpace}'");
+                    Debug.LogError($"[Localization] Unable to load namespace '{nameSpace}'");
                     return false;
                 }
             }

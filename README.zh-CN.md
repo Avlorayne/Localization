@@ -1,38 +1,45 @@
-# Unity 本地化包(Localization)
+# Unity 本地化包（Localization）
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
-[![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity&logoColor=white)](https://unity.com/releases/editor/archive)
+[![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
 
 [English](README.md) | **简体中文**
 
-`com.dotline.localization` 是一个面向 Unity 项目的轻量本地化数据包。它将 `.csv` / `.xlsx` 源表转换为 `LanguageDataSO` 资产,校验 Key 的合法性,在运行时解析嵌套文本模板,并通过 Addressables 加载语言数据。
+本包是 Dotline 开发（作者 Avlorayne）的基于 Unity 2022.3.62 的本地化组件，在 Unity Editor 和 Unity Runtime 均有自动化工作，流程化与灵活性高。
 
-## 功能概览
+基本流程与分工如下：
 
-| 领域 | 说明 |
-| --- | --- |
-| 配置 | 一个 `LanguageConfigSO` 统一管理源文件目录、生成的 `LanguageDataSO` 目录、默认语言与 fallback 语言链。 |
-| 源文件 | 同时支持 `.csv` 与 `.xlsx`,表头由语言配置驱动。 |
-| 编辑器工作流 | `Tools/Localization` 菜单可批量转换变更的或全部源文件。 |
-| 资产 Inspector | `LanguageDataSO` 自定义 Inspector 支持导入、导出、搜索、新增、删除,以及重复 Key 和非法内容校验。 |
-| 模板 | `<Namespace\|KEY>` 与 `<Namespace\|KEY(arg0,arg1)>` 语法,运行时嵌套解析。 |
-| 运行时加载 | 语言数据通过 Addressables 加载,首次加载后缓存。 |
+- 策划在 Excel/CSV 表里维护多语言文本，
+- 程序在代码里用 `<UI|KEY>` 模板取文本。
+- 本包开发的 Editor 组件负责把源表一键转换成 Unity 资产、校验 Key、解析参数与嵌套模板，并自动注册 Addressables。
+
+大致流程：
+
+```
+策划填 Excel/CSV → Unity 菜单一键转换 → 自动生成 LanguageDataSO 并注册 Addressables → 程序在代码里用 <UI|KEY> 取文本
+```
+
+主要特点：
+
+- **一键转换** — Excel/CSV 源表在 Unity 里一键转成 `LanguageDataSO` 资产；按哈希做增量转换，只处理改过的表。
+- **Key 校验** — 重复 Key 和非法内容在转换阶段就被拦截，不会带进游戏。
+- **模板系统** — 运行时解析 `<UI|KEY>` 取词，支持参数和嵌套模板。
+- **自动注册 Addressables** — 通过校验的资产自动进入 `Localization` 分组，无需手动配置。
+- **多语言回退** — 每种语言可单独设置一级回退语言，之后再尝试可配置的默认语言。
 
 ## 安装
 
-需要 **Unity 2022.3** 或更高版本。`com.unity.addressables` 1.22.3 会自动解析依赖。
+需要 **Unity 2022.3** 或更高版本；`com.unity.addressables` 1.22.3 会自动解析依赖。项目需已初始化 Addressables（打开过 **Window → Asset Management → Addressables → Groups** 生成 Settings 资产），否则转换时无法自动注册资产，会在 Console 提示。
 
-### 方式一 — Git URL(推荐)
-
-在 Package Manager 中点击 **Add package from git URL**(`+` 按钮),粘贴:
+**方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
 ```
 https://github.com/Avlorayne/Localization.git
 ```
 
-或直接在 `Packages/manifest.json` 中添加:
+或直接在 `Packages/manifest.json` 中添加：
 
 ```json
 {
@@ -42,9 +49,7 @@ https://github.com/Avlorayne/Localization.git
 }
 ```
 
-### 方式二 — 内嵌包
-
-将本目录复制到目标项目的 `Packages/com.dotline.localization`,Unity 会自动识别,无需在 manifest 中声明。如需显式引用:
+**方式二 — 内嵌包**：将本目录复制到目标项目的 `Packages/com.dotline.localization`，Unity 自动识别，无需在 manifest 中声明。如需显式引用：
 
 ```json
 {
@@ -54,15 +59,100 @@ https://github.com/Avlorayne/Localization.git
 }
 ```
 
-## 快速开始
+## 阅读指南
 
-1. 打开 **Tools → Localization → Open Language Config**,创建或选中 `Assets/Settings/LanguageConfig.asset`。
-2. 设置 `sourceFolderPath`(默认:`Assets/Editor/Text Files/Localization`)。
-3. 设置 `soFolderPath`(默认:`Assets/Resources/Localization`)。运行时加载地址兼容 Resources 风格路径,但生成的资产需标记为 Addressable 才能被当前加载器解析。
-4. 在源目录创建 `.csv` 或 `.xlsx` 文件,第一行建议使用 `Key,zh-Hans,zh-Hant,en,ja,ko,Comment`。
-5. 执行 **Tools → Localization → Convert Changed Source Files**。
-6. 将生成的 `LanguageDataSO` 加入 Addressables,并确认地址可按命名空间或资产路径解析。
-7. 在代码中创建 `LocalizationSystem`:
+按角色读，各取所需：
+
+| 角色 | 只需要读          | 大约耗时  |
+| -- | ------------- | ----- |
+| 策划 | [策划指南](#策划指南) | 5 分钟  |
+| 程序 | [程序指南](#程序指南) | 10 分钟 |
+
+***
+
+## 策划指南
+
+不需要写任何代码。日常就是三步：
+
+1. 在源表目录（默认 `Assets/Editor/Text Files/Localization`）里编辑 `.xlsx` 或 `.csv`；
+2. 回到 Unity，执行 **Tools → Localization → Convert Changed Source Files**（只转换改过的表）；
+3. 完成。生成的文本资产会自动进入 Addressables，程序那边立即可用。
+
+![源文件放置位置](screenshots/place_source_files.png)
+![执行转换](screenshots/convert_files.png)
+![LanguageDataSO Inspector](screenshots/dataso_inspector.png)
+
+### 表格怎么填
+
+第一行是表头：一个 `Key` 列 + 每种语言一列 + 可选的 `Comment` 列。
+
+| Key        | zh-Hans    | zh-Hant   | en         | ja            | ko       | Comment |
+| ---------- | ---------- | --------- | ---------- | ------------- | -------- | ------- |
+| START_GAME | 开始游戏       | 開始遊戲      | Start Game | ゲーム開始         | 게임 시작    | 主菜单按钮   |
+| ITEM_COUNT | 共 {0} 个物品  | 共 {0} 個物品 | {0} items  | {0} 個のアイテム    | 아이템 {0}개 | 带参数文本   |
+
+规则（违反会导致转换失败或报错）：
+
+- `Key` 推荐只用大写字母、数字、下划线，如 `START_GAME`；同一命名空间内不能重复，可用 **Tools → Localization → Validate Duplicate Keys** 全量检查。
+- 语言列表头写语言代码或显示名都行，如 `zh-Hans`、`简体中文`。项目支持哪些语言由 `LanguageConfigSO` 配置，加新语言前先和程序确认。
+- 注释列表头可写 `Comment`、`Note`、`备注` 等，内容只给团队看，不会进游戏。
+- **语言内容里不要再写** **`<UI|...>`** **占位符**，编辑器会视为致命错误。要引用别的条目，请写在模板里（见下节）。
+
+### 模板语法（策划必读）
+
+模板是写在文本里的“取词占位符”，游戏运行时会把它替换成对应文本。语法一律是 `<命名空间 | KEY (args[]) >`：
+
+| 你写的模板                                         | 最终显示                     | 说明                                 |
+| --------------------------------------------- | ------------------------ | ---------------------------------- |
+| `<UI\|START_GAME>`                            | Start Game               | 基本引用：`UI` 是命名空间，`START_GAME` 是 Key |
+| `<UI\|ITEM_COUNT(3)>`                         | 3 items                  | 带参数：表里的 `{0}` 会被替换成 3              |
+| `<UI\|WELCOME(<UI\|PLAYER_NAME>)>`            | Welcome, Captain         | 嵌套：先解析里面的模板，再把结果传进外层               |
+| `<UI\|WELCOME(<UI\|PLAYER_NAME>, "Captain")>` | Welcome, Captain Captain | 文本参数必须用英文双引号包住                     |
+
+- 多个参数用英文逗号分隔，`{0}`、`{1}` 按顺序替换。
+- 普通 TextMesh Pro 富文本（如 `<color=red>`）不会被当成模板，放心使用。
+
+### 应急：直接改生成的资产
+
+转换生成的 `LanguageDataSO` 资产在 Inspector 里可以直接搜索、新增、修改、删除条目，自带重复 Key 和非法内容校验。
+
+**注意：直接改资产的内容，下次转换同一张源表时会被覆盖。** 要长期生效，请改源表；只有源表已删除的资产才不会被动到。如果要保持一致性，可以在修改后点击**导出到源文件**。
+
+
+
+### 常用菜单
+
+| 菜单                                                  | 什么时候用                  |
+| --------------------------------------------------- | ---------------------- |
+| Tools → Localization → Convert Changed Source Files | 日常改完表后用，只转换有变动的表       |
+| Tools → Localization → Convert All Source Files     | 改了配置或怀疑有遗漏时，强制全部重转     |
+| Tools → Localization → Validate Duplicate Keys      | 全量检查重复 Key             |
+| Tools → Localization → Open Language Config         | 打开语言配置（加语言、改目录一般由程序操作） |
+
+***
+
+## 程序指南
+
+### 首次配置
+
+执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Settings/LanguageConfig.asset`：
+![打开 Localization 菜单](screenshots/open_settins.png)
+![LanguageConfig](screenshots/lang_config.png)
+
+| 字段                 | 默认值                                     | 说明                                                         |
+| ------------------ | --------------------------------------- | ---------------------------------------------------------- |
+| `sourceFolderPath` | `Assets/Editor/Text Files/Localization` | 源表目录，转换器递归扫描。                                              |
+| `soFolderPath`     | `Assets/Resources/Localization`         | 生成 `LanguageDataSO` 的目录。                                   |
+| `defaultLanguage`  | `zh-Hans`                               | 主兜底语言：当前语言缺词时最终回退到这里。                                      |
+| `languages`        | `zh-Hans`、`zh-Hant`、`en`、`ja`、`ko`      | 语言列定义，驱动表头、导入导出和 Inspector；每项可单独设置一个 `fallbackLanguage`。 |
+
+### 转换与 Addressables
+
+- 转换器按“源文件哈希 + 资产哈希”做增量转换，日常只转改过的表。
+- 源文件被删除时，转换器只清理哈希记录并保留对应 `LanguageDataSO`，不误删手工维护的数据。
+- 通过校验的 `LanguageDataSO` 会被**自动注册**到 Addressables 的 `Localization` 分组，地址 = `NamespaceId`（为空时用资产名）。保持 `NamespaceId` = 资产名即可，无需手动配置。
+
+### 运行时 API
 
 ```csharp
 using Localization;
@@ -79,49 +169,53 @@ public sealed class LocalizedLabelExample : MonoBehaviour
         localization = new LocalizationSystem(languageConfig);
         localization.SetLanguage("en");
         Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
+        localization.OnLanguageChanged += RefreshAllTexts; // 切换语言后刷新 UI
     }
 }
 ```
 
-## 模板语法
-
-| 语法 | 含义 |
-| --- | --- |
-| `<UI\|START_GAME>` | 基本引用。 |
-| `<UI\|ITEM_COUNT(3)>` | 带参数引用。 |
-| `<UI\|WELCOME(<UI\|PLAYER_NAME>)>` | 嵌套模板作为参数。 |
-| `<UI\|WELCOME(<UI\|PLAYER_NAME>, "Captain")>` | 文本参数必须用双引号包裹,解析后不包含双引号。 |
-
-- 被引用条目中的 `{0}`、`{1}` 会被参数替换,例如:`欢迎你,{0} {1}!` → `欢迎你,队长 Captain!`。
-- 注入 `string` 变量同样有效,但也需要双引号包裹:
-
+- `GetLocalizedText(string template)` 为同步取词，支持参数、嵌套模板。引号内的文本参数原样传递，动态值用 C# 字符串插值拼进模板即可：
   ```csharp
   string name = "William";
-  localization.GetLocalizedText("<UI|WELCOME(<UI|PLAYER_NAME>, \"{William}\")>");
+  localization.GetLocalizedText($"<UI|WELCOME(<UI|PLAYER_NAME>, \"{name}\")>");
   ```
+- 运行时会按命名空间名、`Localization/<name>` 约定和默认的 `Assets/Resources/Localization/<name>.asset` 路径解析地址。按默认配置使用时无需手动管理这些地址。
+- 语言切换后需要刷新的 UI，统一挂 `LocalizationSystem.OnLanguageChanged`。
 
-- 普通 TextMesh Pro 富文本标签(如 `<color=red>`)不会被当作本地化 Key。
+### WebGL 注意
+
+当前公开 API 只有同步取词。WebGL 不能同步等待 Addressables 加载，所以本版本不支持首次查询未缓存命名空间。WebGL 上不要对未缓存数据调用 `GetLocalizedText`；要支持该流程需要未来提供公开的异步/预加载 API。
+
+### 常见问题速查
+
+| 现象            | 处理                                                                                                        |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
+| 取出来的词不对或为空    | 先检查模板的命名空间是否与 `NamespaceId`（或资产名）一致、Key 是否拼写正确；再确认该语言列存在，缺词时会沿 `fallbackLanguage` → `defaultLanguage` 回退。 |
+| 想加一门新语言       | 程序在 `LanguageConfig.languages` 里添加语言定义，策划在表头加对应列，然后 Convert All。                                          |
+| WebGL 上首次取词为空 | 当前公开 API 没有异步/预加载入口，本版本不要在 WebGL 上首次查询未缓存命名空间。                                                                                 |
+
+***
 
 ## 文档
 
-| 文档 | 内容 |
-| --- | --- |
-| [Configuration.md](Documentation~/Configuration.md) | 配置项、源文件格式、路径规则。 |
-| [Architecture.md](Documentation~/Architecture.md) | Runtime / Editor 架构与数据流。 |
-| [Testing.md](Documentation~/Testing.md) | 自动化测试与人工验收用例。 |
-| [FAQ.md](Documentation~/FAQ.md) | 常见问题。 |
+| 文档                                           | 内容                       |
+| -------------------------------------------- | ------------------------ |
+| [配置](Documentation~/Configuration.zh-CN.md)  | 配置项、源文件格式、路径规则。          |
+| [系统架构](Documentation~/Architecture.zh-CN.md) | Runtime / Editor 架构与数据流。 |
+| [运行时技术说明](Documentation~/Runtime.zh-CN.md) | Runtime 全部代码职责、模板解析与回退规则详解。 |
+| [测试用例](Documentation~/Testing.zh-CN.md)      | 自动化测试与人工验收用例。            |
+| [FAQ](Documentation~/FAQ.zh-CN.md)           | 常见问题。                    |
 
 ## 示例
 
-在 Package Manager 的包详情页 Samples 区域导入 **Basic Localization Example**。导入后会得到一个最小 CSV 源文件和 `BasicLocalizationExample` 脚本,演示配置、转换与运行时查询。
+在 Package Manager 的包详情页 Samples 区域导入 **Basic Localization Example**。导入后会得到一个最小 CSV 源文件和 `BasicLocalizationExample` 脚本，演示配置、转换与运行时查询。
 
 ## 已知限制
 
-- WebGL 平台不能同步等待 Addressables 加载,请使用异步加载路径。
-- `LocalizationSystem.GetLocalizedText` 依赖同步查询,不适合 WebGL 首次加载时直接查询未缓存资源。
-- 源文件被删除时,转换器只清理哈希记录并保留对应 `LanguageDataSO`,避免误删人工维护的数据。
-- 包内嵌了第三方二进制依赖,重新分发时请保留 `Third Party Notices.md`。
+- 当前公开 API 为同步取词，WebGL 上首次查询未缓存命名空间不受支持；该场景需要公开的异步/预加载 API。
+- 源文件被删除时，转换器只清理哈希记录并保留对应 `LanguageDataSO`，保护手工维护的数据。
+- 包内嵌了第三方二进制依赖，重新分发时请保留 `Third Party Notices.md`。
 
 ## 许可证
 
-MIT 许可证,详见 [LICENSE.md](LICENSE.md)。第三方库的许可见 [Third Party Notices.md](Third%20Party%20Notices.md)。
+MIT 许可证，详见 [LICENSE.md](LICENSE.md)。第三方库的许可见 [Third Party Notices.md](Third%20Party%20Notices.md)。
