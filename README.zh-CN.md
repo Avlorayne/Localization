@@ -1,6 +1,6 @@
 # Unity 本地化包（Localization）
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
@@ -36,7 +36,7 @@
 **方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
 ```
-https://github.com/Avlorayne/Localization.git
+https://github.com/Avlorayne/Localization.git#1.0.2
 ```
 
 或直接在 `Packages/manifest.json` 中添加：
@@ -44,7 +44,7 @@ https://github.com/Avlorayne/Localization.git
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.2"
   }
 }
 ```
