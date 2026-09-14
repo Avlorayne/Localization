@@ -46,5 +46,5 @@ How to run:
 - All EditMode tests pass.
 - The Package Manager correctly displays the README, Samples and dependencies.
 - `Basic Localization Example` imports without script compile errors.
-- `Third Party Notices.md` covers the embedded Superpower and ExcelDataReader.
+- `Third Party Notices.md` covers the embedded ExcelDataReader; Superpower notices are maintained by the `com.dotline.superpower` package.
 - The `package.json` version matches `CHANGELOG.md`.

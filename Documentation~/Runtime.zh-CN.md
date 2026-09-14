@@ -75,7 +75,7 @@ flowchart LR
 所有 Runtime 代码位于单一程序集 `Dotline.Localization`（`Runtime/Dotline.Localization.asmdef`），依赖：
 
 - `Unity.Addressables` / `Unity.ResourceManager`（package.json 声明 `com.unity.addressables: 1.22.3`）；
-- `Superpower 3.2.1`（预编译 DLL，位于 `Runtime/Plugins/Superpower.3.2.1`），用于模板解析。
+- 依赖 `com.dotline.superpower` 提供的 Superpower 3.2.1 预编译 DLL，用于模板解析。
 
 Runtime 内部有两个 `internal` 类型（`LocalizationLookup`、`LanguageDataLoader`），外部调用方不可见——这是刻意设计：查找与加载属于实现细节，公开 API 只保留 `LocalizationSystem` 一条入口。
 

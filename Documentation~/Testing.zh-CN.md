@@ -46,5 +46,5 @@ EditMode 测试位于 `Tests/Editor`，测试程序集为 `Dotline.Localization.
 - 所有 EditMode 测试通过。
 - Package Manager 能正确显示 README、Samples 和依赖。
 - 导入 `Basic Localization Example` 后脚本无编译错误。
-- `Third Party Notices.md` 覆盖嵌入的 Superpower 与 ExcelDataReader。
+- `Third Party Notices.md` 覆盖包内嵌的 ExcelDataReader；Superpower 的声明位于 `com.dotline.superpower` 包。
 - `package.json` 版本与 `CHANGELOG.md` 一致。
