@@ -110,6 +110,59 @@ namespace Localization.Editor
                 "ランタイムは Resources フォルダーから LanguageDataSO を読み込みます。SO フォルダーはいずれかの Resources サブフォルダー配下に置いてください。そうしないと実行時に読み込まれません。",
                 "런타임은 Resources 폴더에서 LanguageDataSO를 로드합니다. SO 폴더를 Resources 하위 폴더 아래에 두지 않으면 빌드에서 로드되지 않습니다."
             },
+            ["settings.addressables.group"] = new[]
+            {
+                "DataSO Addressables Group", "DataSO Addressables 分组", "DataSO Addressables 群組",
+                "DataSO Addressables グループ", "DataSO Addressables 그룹"
+            },
+            ["settings.addressables.group.tooltip"] = new[]
+            {
+                "Addressables group used when valid LanguageDataSO assets are registered automatically.",
+                "通过校验的 LanguageDataSO 自动注册时使用的 Addressables 分组。",
+                "通過驗證的 LanguageDataSO 自動註冊時使用的 Addressables 群組。",
+                "検証済みの LanguageDataSO を自動登録するときに使用する Addressables グループです。",
+                "검증된 LanguageDataSO를 자동 등록할 때 사용할 Addressables 그룹입니다."
+            },
+            ["settings.addressables.group.empty"] = new[]
+            {
+                "No group is configured. Valid LanguageDataSO assets will not be registered until you pick or declare a group.",
+                "尚未配置分组；通过校验的 LanguageDataSO 在选择或声明分组前不会被自动注册。",
+                "尚未設定群組；通過驗證的 LanguageDataSO 在選擇或宣告群組前不會被自動註冊。",
+                "グループが未設定です。検証済みの LanguageDataSO は、グループを選択または宣言するまで登録されません。",
+                "그룹이 구성되지 않았습니다. 검증된 LanguageDataSO는 그룹을 선택하거나 선언하기 전까지 등록되지 않습니다."
+            },
+            ["settings.addressables.group.custom"] = new[]
+            {
+                "Custom / Not-yet-created Group",
+                "自定义或未创建的分组",
+                "自訂或未建立的群組",
+                "カスタムまたは未作成のグループ",
+                "사용자 지정 또는 미생성 그룹"
+            },
+            ["settings.addressables.group.open.window"] = new[]
+            {
+                "Groups Window",
+                "Groups 窗口",
+                "Groups 視窗",
+                "Groups ウィンドウ",
+                "Groups 창"
+            },
+            ["settings.addressables.group.not.found"] = new[]
+            {
+                "Group '{0}' does not exist yet. It will be created automatically on registration.",
+                "分组 '{0}' 尚不存在，注册时将自动创建。",
+                "群組 '{0}' 尚不存在，註冊時將自動建立。",
+                "グループ '{0}' はまだ存在しません。登録時に自動作成されます。",
+                "그룹 '{0}'이(가) 아직 없습니다. 등록 시 자동 생성됩니다."
+            },
+            ["settings.addressables.group.no.addressables"] = new[]
+            {
+                "Addressables is not set up in this project. Enter a group name manually.",
+                "本项目尚未配置 Addressables，请手动输入分组名。",
+                "此專案尚未設定 Addressables，請手動輸入群組名稱。",
+                "このプロジェクトには Addressables が未設定です。グループ名を手動入力してください。",
+                "이 프로젝트에는 Addressables가 설정되어 있지 않습니다. 그룹 이름을 직접 입력하세요."
+            },
             ["key.namespace"] = new[] { "Namespace", "命名空间", "命名空間", "名前空間", "네임스페이스" },
             ["undo.add.entry"] = new[]
                 { "Add New Localization Entry", "添加本地化条目", "新增在地化項目", "ローカライズ項目を追加", "현지화 항목 추가" },

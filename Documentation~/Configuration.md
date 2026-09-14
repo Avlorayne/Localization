@@ -8,15 +8,18 @@
 | --- | --- | --- |
 | `name` | `com.dotline.localization` | UPM package name. Should not change after release. |
 | `displayName` | `Localization` | Name shown in the Package Manager. |
-| `version` | `1.0.3` | Semantic version. Update together with public API or data format changes. |
+| `version` | `1.0.4` | Semantic version. Update together with public API or data format changes. |
 | `license` / `type` | `MIT` / `tool` | License and package type. |
 | `unity` | `2022.3` | Minimum Unity version. |
 | `dependencies.com.unity.addressables` | `1.22.3` | Runtime loads `LanguageDataSO` through Addressables. |
+| `dependencies.com.unity.textmeshpro` | `3.0.7` | Provides TMP components and Essentials for the editor integration and samples. |
 | `samples` | `Basic Localization Example` | Importable from the Package Manager. |
 
-## LanguageConfigSO
+## Language config
 
-Created via `Create > Settings > Language Config`, or `Tools/Localization/Open Language Config`. The package menu stores the asset at `Assets/Resources/Localization/LanguageConfig.asset` by default so runtime code can load it from `Resources`.
+Created via `Tools/Localization/Open Language Config`, which opens **Project Settings > Localization**.
+
+The source settings are stored at `ProjectSettings/DotlineLocalizationSettings.asset`, outside `Assets`, so they are less likely to be removed during asset cleanup. `LocalizationSystem` automatically loads the baked runtime `LanguageConfigSO` from `Resources`: the baked asset lives at `Assets/Resources/Localization/LanguageConfig.asset`, with runtime load name `Localization/LanguageConfig`.
 
 | Field | Default | Description |
 | --- | --- | --- |
@@ -24,6 +27,8 @@ Created via `Create > Settings > Language Config`, or `Tools/Localization/Open L
 | `soFolderPath` | `Assets/Resources/Localization` | Output folder for generated `LanguageDataSO` assets. Recommended under a Resources folder, with generated assets configured as Addressable. |
 | `defaultLanguage` | `zh-Hans` | Primary default language. `LocalizationData.TryGet` records default-language text as the fallback value. |
 | `languages` | `zh-Hans`, `zh-Hant`, `en`, `ja`, `ko` | Language column definitions. Drives import, export, Inspector fields and standard headers. |
+
+Editing the Project Settings page saves and bakes the runtime `LanguageConfig.asset` automatically. You can also run `Tools/Localization/Bake Runtime Language Config` manually.
 
 ## LanguageDefinition
 
@@ -67,7 +72,8 @@ Rules:
 
 | Menu | Behavior |
 | --- | --- |
-| `Tools/Localization/Open Language Config` | Opens or creates `Assets/Resources/Localization/LanguageConfig.asset`. |
+| `Tools/Localization/Open Language Config` | Opens the Project Settings language config. |
+| `Tools/Localization/Bake Runtime Language Config` | Bakes the Project Settings config to `Assets/Resources/Localization/LanguageConfig.asset`. |
 | `Tools/Localization/Convert Changed Source Files` | Converts only changed items based on source file and SO hashes. |
 | `Tools/Localization/Convert All Source Files` | Forces conversion of all `.csv` and `.xlsx` source files. |
 | `Tools/Localization/Validate Duplicate Keys` | Scans all `LanguageDataSO` assets for duplicate keys per namespace. |

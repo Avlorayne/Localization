@@ -8,15 +8,18 @@
 | --- | --- | --- |
 | `name` | `com.dotline.localization` | UPM 包名。发布后不应随意修改。 |
 | `displayName` | `Localization` | Package Manager 中显示的名称。 |
-| `version` | `1.0.3` | 语义化版本。公共 API 或数据格式变更时同步更新。 |
+| `version` | `1.0.4` | 语义化版本。公共 API 或数据格式变更时同步更新。 |
 | `license` / `type` | `MIT` / `tool` | 许可证与包类型。 |
 | `unity` | `2022.3` | 最低 Unity 版本。 |
 | `dependencies.com.unity.addressables` | `1.22.3` | Runtime 通过 Addressables 加载 `LanguageDataSO`。 |
+| `dependencies.com.unity.textmeshpro` | `3.0.7` | 为编辑器集成和示例提供 TMP 组件与 Essentials。 |
 | `samples` | `Basic Localization Example` | Package Manager 可导入示例。 |
 
-## LanguageConfigSO
+## 语言配置
 
-创建入口：`Create > Settings > Language Config`，或 `Tools/Localization/Open Language Config`。包菜单默认将资产保存为 `Assets/Resources/Localization/LanguageConfig.asset`，这样运行时代码可以从 `Resources` 加载它。
+创建入口：`Tools/Localization/Open Language Config`，会打开 **Project Settings > Localization**。
+
+配置源保存在 `ProjectSettings/DotlineLocalizationSettings.asset`，不放在 `Assets` 下，避免被资源清理误删。`LocalizationSystem` 会自动从 `Resources` 加载烘焙后的运行时 `LanguageConfigSO`，路径为 `Assets/Resources/Localization/LanguageConfig.asset`，运行时加载名为 `Localization/LanguageConfig`。
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -24,6 +27,8 @@
 | `soFolderPath` | `Assets/Resources/Localization` | 生成 `LanguageDataSO` 的目录。建议放在 Resources 子目录下，并将生成资产配置为 Addressable。 |
 | `defaultLanguage` | `zh-Hans` | 主默认语言。`LocalizationData.TryGet` 会优先记录默认语言文本作为兜底值。 |
 | `languages` | `zh-Hans`, `zh-Hant`, `en`, `ja`, `ko` | 语言列定义。导入、导出、Inspector 输入框和标准表头都由该列表驱动。 |
+
+在 Project Settings 页面修改配置会自动保存并烘焙运行时 `LanguageConfig.asset`。也可以手动执行 `Tools/Localization/Bake Runtime Language Config`。
 
 ## LanguageDefinition
 
@@ -67,7 +72,8 @@ WELCOME,欢迎 {0},歡迎 {0},Welcome {0},{0} ようこそ,{0} 환영합니다,�
 
 | 菜单 | 行为 |
 | --- | --- |
-| `Tools/Localization/Open Language Config` | 打开或创建 `Assets/Resources/Localization/LanguageConfig.asset`。 |
+| `Tools/Localization/Open Language Config` | 打开 Project Settings 中的语言配置。 |
+| `Tools/Localization/Bake Runtime Language Config` | 将 Project Settings 配置烘焙到 `Assets/Resources/Localization/LanguageConfig.asset`。 |
 | `Tools/Localization/Convert Changed Source Files` | 根据源文件和 SO 哈希，只转换变化项。 |
 | `Tools/Localization/Convert All Source Files` | 强制转换全部 `.csv` 和 `.xlsx` 源文件。 |
 | `Tools/Localization/Validate Duplicate Keys` | 扫描所有 `LanguageDataSO`，按命名空间检查重复 Key。 |

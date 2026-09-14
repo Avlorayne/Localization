@@ -279,7 +279,7 @@ private static string[] BuildAddressCandidates(string requestedAddress)
 
 ### 3.1 LanguageConfigSO —— 语言清单
 
-`LanguageConfigSO.cs` 是你在项目里配置的那份“项目支持哪些语言”的 ScriptableObject（菜单 `Settings/Language Config`）。通过包菜单 `Tools/Localization/Open Language Config` 创建时，默认路径为 `Assets/Resources/Localization/LanguageConfig.asset`，因为它属于运行时配置：
+`LanguageConfigSO.cs` 是运行时使用的语言清单副本，描述“项目支持哪些语言”。源配置保存在 `ProjectSettings/DotlineLocalizationSettings.asset`，编辑器会把它烘焙到 `Assets/Resources/Localization/LanguageConfig.asset`，运行时由 `LocalizationSystem` 自动加载：
 
 ```csharp
 public class LanguageConfigSO : ScriptableObject
@@ -397,21 +397,23 @@ flowchart TD
 [Serializable]
 public class LocalizationSystem
 {
+    public const string RuntimeConfigResourcePath = "Localization/LanguageConfig";
+
     private LocalizationLookup _lookup;
     private LanguageConfigSO _languageConfig;
     public LanguageDefinition CurrentDefinition { get; private set; }
 
     public Action OnLanguageChanged;
 
-    public LocalizationSystem(LanguageConfigSO languageConfig)
+    public LocalizationSystem()
     {
-        _languageConfig = languageConfig;
+        _languageConfig = Resources.Load<LanguageConfigSO>(RuntimeConfigResourcePath);
         _lookup = new LocalizationLookup(_languageConfig.defaultLanguage);
     }
 }
 ```
 
-构造时只需要一份 `LanguageConfigSO`；默认语言随之传给 `LocalizationLookup`，作为词条级回退的“打底”语言。
+构造时不需要外部传入 `LanguageConfigSO`；系统会固定从 `Resources/Localization/LanguageConfig` 读取烘焙后的运行时配置。默认语言随之传给 `LocalizationLookup`，作为词条级回退的“打底”语言。
 
 切换语言带去重保护——相同语言不重复广播：
 
@@ -756,18 +758,17 @@ Start Game！Welcome, Traveler!
 
 ### 6.1 准备
 
-1. 创建 `LanguageConfigSO`（菜单 `Settings/Language Config`），确认默认语言与语言列表；
+1. 打开 **Project Settings → Localization**，确认默认语言与语言列表，并确保已经烘焙出 `Assets/Resources/Localization/LanguageConfig.asset`；
 2. 在 Editor 端把 CSV/XLSX 源表转换为 `LanguageDataSO`，工具会自动将其注册到 Addressables（地址为 `NamespaceId`）。
 
 ### 6.2 初始化与取词
 
 ```csharp
-[SerializeField] private LanguageConfigSO _config;
 private LocalizationSystem _localization;
 
 void Awake()
 {
-    _localization = new LocalizationSystem(_config);
+    _localization = new LocalizationSystem();
     _localization.SetLanguage(Application.systemLanguage switch
     {
         SystemLanguage.English => "en",

@@ -5,7 +5,7 @@ using ExcelDataReader;
 using UnityEngine;
 using static Localization.Editor.LocalizationEditorText;
 
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     internal static class XlsxLocalizationParser
     {

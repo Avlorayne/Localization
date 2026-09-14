@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System.IO;
 
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     internal static class LocalizationSourceFileAccess
     {

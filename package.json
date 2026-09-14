@@ -1,7 +1,7 @@
 {
   "name": "com.dotline.localization",
   "displayName": "Localization",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "unity": "2022.3",
   "description": "Runtime and editor tooling for project localization data, source import, and Addressables-backed language data loading.",
   "type": "tool",
@@ -14,16 +14,17 @@
     "csv"
   ],
   "dependencies": {
-    "com.unity.addressables": "1.22.3"
+    "com.unity.addressables": "1.22.3",
+    "com.unity.textmeshpro": "3.0.7"
   },
   "samples": [
     {
       "displayName": "Basic Localization Example",
-      "description": "A minimal source file and MonoBehaviour showing LanguageConfigSO, source conversion, and runtime template lookup.",
+      "description": "A minimal source file and MonoBehaviour showing parameterless LocalizationSystem setup, source conversion, and runtime template lookup.",
       "path": "Samples~/BasicExample"
     }
   ],
   "author": {
-    "name": "Dotline"
+    "name": "Avlorayne/Dotline"
   }
 }

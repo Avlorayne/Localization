@@ -1,6 +1,6 @@
 # Unity 本地化包（Localization）
 
-[![Version](https://img.shields.io/badge/version-1.0.3-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.4-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
@@ -36,7 +36,7 @@
 **方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.3
+https://github.com/Avlorayne/Localization.git#1.0.4
 ```
 
 或直接在 `Packages/manifest.json` 中添加：
@@ -44,7 +44,7 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.3"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.4"
   }
 }
 ```
@@ -94,7 +94,7 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 规则（违反会导致转换失败或报错）：
 
 - `Key` 推荐只用大写字母、数字、下划线，如 `START_GAME`；同一命名空间内不能重复，可用 **Tools → Localization → Validate Duplicate Keys** 全量检查。
-- 语言列表头写语言代码或显示名都行，如 `zh-Hans`、`简体中文`。项目支持哪些语言由 `LanguageConfigSO` 配置，加新语言前先和程序确认。
+- 语言列表头写语言代码或显示名都行，如 `zh-Hans`、`简体中文`。项目支持哪些语言由 **Project Settings → Localization** 配置，加新语言前先和程序确认。
 - 注释列表头可写 `Comment`、`Note`、`备注` 等，内容只给团队看，不会进游戏。
 - **语言内容里不要再写** **`<UI|...>`** **占位符**，编辑器会视为致命错误。要引用别的条目，请写在模板里（见下节）。
 
@@ -127,7 +127,8 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 | Tools → Localization → Convert Changed Source Files | 日常改完表后用，只转换有变动的表       |
 | Tools → Localization → Convert All Source Files     | 改了配置或怀疑有遗漏时，强制全部重转     |
 | Tools → Localization → Validate Duplicate Keys      | 全量检查重复 Key             |
-| Tools → Localization → Open Language Config         | 打开语言配置（加语言、改目录一般由程序操作） |
+| Tools → Localization → Open Language Config         | 打开 Project Settings 里的语言配置（加语言、改目录一般由程序操作） |
+| Tools → Localization → Bake Runtime Language Config | 手动把 Project Settings 配置烘焙到运行时 `Resources` 资产 |
 
 ***
 
@@ -135,46 +136,56 @@ https://github.com/Avlorayne/Localization.git#1.0.3
 
 ### 首次配置
 
-执行 **Tools → Localization → Open Language Config**，创建或打开 `Assets/Resources/Localization/LanguageConfig.asset`：  
+执行 **Tools → Localization → Open Language Config**，打开 **Project Settings → Localization**。
+配置时需要选择`Addressables Group`，配置完成后，有效的`Localization Data SO`资源会被自动放入组中。
 
 ![打开 Localization 菜单](screenshots/open_settins.png)
-![LanguageConfig](screenshots/lang_config.png)
+![Localization Project Settings](screenshots/lang_proj_config.png)
+
+配置源文件保存在 `ProjectSettings/DotlineLocalizationSettings.asset`，不放在 `Assets` 下，避免被资源清理误删。运行时读取其烘焙产物 `Assets/Resources/Localization/LanguageConfig.asset`：Project Settings 页面修改配置、转换源表、进入 Play Mode、构建 Player 前都会创建或刷新这份运行时副本，也可以手动执行 **Tools → Localization → Bake Runtime Language Config**。
 
 | 字段                 | 默认值                                     | 说明                                                         |
 | ------------------ | --------------------------------------- | ---------------------------------------------------------- |
 | `sourceFolderPath` | `Assets/Editor/Text Files/Localization` | 源表目录，转换器递归扫描。                                              |
-| `soFolderPath`     | `Assets/Resources/Localization`         | 生成 `LanguageDataSO` 的目录。                                   |
+| `soFolderPath`     | `Assets/Resources/Localization`         | 生成 `LanguageDataSO` 的目录；运行时 `LanguageConfig.asset` 固定烘焙到 `Assets/Resources/Localization`。 |
 | `defaultLanguage`  | `zh-Hans`                               | 主兜底语言：当前语言缺词时最终回退到这里。                                      |
 | `languages`        | `zh-Hans`、`zh-Hant`、`en`、`ja`、`ko`      | 语言列定义，驱动表头、导入导出和 Inspector；每项可单独设置一个 `fallbackLanguage`。 |
 
 ### 转换与 Addressables
 
 - 转换器按“源文件哈希 + 资产哈希”做增量转换，日常只转改过的表。
+- 每次转换前会先烘焙运行时 `LanguageConfig.asset`，确保 Player 侧拿到最新语言配置。
 - 源文件被删除时，转换器只清理哈希记录并保留对应 `LanguageDataSO`，不误删手工维护的数据。
 - 通过校验的 `LanguageDataSO` 会被**自动注册**到 Addressables 的 `Localization` 分组，地址 = `NamespaceId`（为空时用资产名）。保持 `NamespaceId` = 资产名即可，无需手动配置。
 
 ### 运行时 API
 
+`LocalizationSystem` 现在通过无参构造函数构建。首次使用时，它会从 `Resources/Localization/LanguageConfig` 自动加载烘焙后的运行时配置，调用方不需要传入或序列化 `LanguageConfigSO`。
+
 ```csharp
+using Localization;
 using UnityEngine;
 
 public sealed class LocalizedLabelExample : MonoBehaviour
 {
-    private BasicLocalizationExample localization;
+    private LocalizationSystem localization;
 
     private void Awake()
     {
-        localization = BasicLocalizationExample.Instance;
-        localization.SetLanguage("en");
-        Debug.Log($"Language: {localization.GetLanguageCode()}");
+        localization = new LocalizationSystem();
+        if (!localization.IsReady)
+            return;
+
+        localization.CurrentLanguageCode = "en";
+        Debug.Log($"Language: {localization.CurrentLanguageCode}");
         Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
-        localization.AddListener(RefreshAllTexts); // 切换语言后刷新 UI
+        localization.OnLanguageChanged += RefreshAllTexts; // 切换语言后刷新 UI
     }
 
     private void OnDestroy()
     {
         if (localization != null)
-            localization.RemoveListener(RefreshAllTexts);
+            localization.OnLanguageChanged -= RefreshAllTexts;
     }
 
     private void RefreshAllTexts()
@@ -190,7 +201,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
   localization.GetLocalizedText($"<UI|WELCOME(<UI|PLAYER_NAME>, \"{name}\")>");
   ```
 - 运行时会按命名空间名、`Localization/<name>` 约定和默认的 `Assets/Resources/Localization/<name>.asset` 路径解析地址。按默认配置使用时无需手动管理这些地址。
-- 使用示例门面时，语言切换后的 UI 刷新统一通过 `BasicLocalizationExample.AddListener` 注册，并用 `RemoveListener` 移除同一个回调。
+- Basic Localization sample 会用场景级 `BasicLocalizationExample` 门面包装同样的 `LocalizationSystem` 构建方式，方便快速演示 UI。
 
 ### WebGL 注意
 
@@ -201,7 +212,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
 | 现象            | 处理                                                                                                        |
 | ------------- | --------------------------------------------------------------------------------------------------------- |
 | 取出来的词不对或为空    | 先检查模板的命名空间是否与 `NamespaceId`（或资产名）一致、Key 是否拼写正确；再确认该语言列存在，缺词时会沿 `fallbackLanguage` → `defaultLanguage` 回退。 |
-| 想加一门新语言       | 程序在 `LanguageConfig.languages` 里添加语言定义，策划在表头加对应列，然后 Convert All。                                          |
+| 想加一门新语言       | 程序在 **Project Settings → Localization** 的 `languages` 里添加语言定义，策划在表头加对应列，然后 Convert All。                                          |
 | WebGL 上首次取词为空 | 当前公开 API 没有异步/预加载入口，本版本不要在 WebGL 上首次查询未缓存命名空间。                                                                                 |
 
 ***
@@ -214,6 +225,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
 | [系统架构](Documentation~/Architecture.zh-CN.md) | Runtime / Editor 架构与数据流。 |
 | [运行时技术说明](Documentation~/Runtime.zh-CN.md) | Runtime 全部代码职责、模板解析与回退规则详解。 |
 | [测试用例](Documentation~/Testing.zh-CN.md)      | 自动化测试与人工验收用例。            |
+| [报错与警告条例](Documentation~/LocalizationErrorWarningRules.zh-CN.md) | 错误、警告、弹窗与前端 Editor 处理策略。 |
 | [FAQ](Documentation~/FAQ.zh-CN.md)           | 常见问题。                    |
 
 ## 示例
@@ -224,12 +236,12 @@ public sealed class LocalizedLabelExample : MonoBehaviour
 
 - `SampleScene`：已经挂载 `BasicLocalizationExample` 和文本示例组件。
 - `UI.csv`：最小化本地化源文件。
-- `Resources/Localization/LanguageConfig.asset`：未手动指定配置时，运行时会自动加载。
+- `Resources/Localization/LanguageConfig.asset`：`LocalizationSystem` 自动加载的运行时烘焙配置副本；项目级源配置仍以 **Project Settings → Localization** 为准。
 
 使用步骤：
 
-1. 打开导入后的 `BasicExample` 文件夹，选中 `Resources/Localization/LanguageConfig.asset`。
-2. 将 `sourceFolderPath` 指向 `UI.csv` 所在目录；将 `soFolderPath` 保持为 `Assets/Resources/Localization` 或项目约定的输出目录。
+1. 执行 **Tools → Localization → Open Language Config**，打开 **Project Settings → Localization**。
+2. 将 `sourceFolderPath` 指向导入后 `UI.csv` 所在目录；将 `soFolderPath` 保持为 `Assets/Resources/Localization` 或项目约定的输出目录。
 3. 确认宿主项目已经初始化 Addressables，然后执行 `Tools/Localization/Convert All Source Files`。
 4. 打开 `SampleScene` 并运行。生成的本地化资源会自动加入 `Localization` Addressables 分组。
 
@@ -239,6 +251,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
 BasicLocalizationExample localization = BasicLocalizationExample.Instance;
 localization.SetLanguage("en");
 
+bool ready = localization.IsReady;
 string languageCode = localization.GetLanguageCode();
 string text = localization.GetLocalizedText("<UI|START_GAME>");
 
@@ -247,7 +260,7 @@ localization.AddListener(RefreshTexts);
 // localization.RemoveListener(RefreshTexts);
 ```
 
-示例配置位于 `Resources/Localization`，因此运行时默认通过 `Resources.Load<LanguageConfigSO>("Localization/LanguageConfig")` 加载。
+运行时配置由 Project Settings 烘焙到 `Assets/Resources/Localization/LanguageConfig.asset`，`LocalizationSystem` 会自动通过 `Resources` 加载这份运行时配置。
 
 ## 已知限制
 

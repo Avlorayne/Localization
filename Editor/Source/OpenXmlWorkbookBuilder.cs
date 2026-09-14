@@ -5,7 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     /// <summary>
     /// 从零构建最小化 XLSX 工作簿的 OOXML 构造器（与"补丁既有工作簿"逻辑分离）。

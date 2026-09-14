@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using Localization.Editor.Source;
 using UnityEditor;
 using UnityEngine;
 using static Localization.Editor.LocalizationEditorText;
@@ -11,7 +12,6 @@ namespace Localization.Editor
 {
     internal static class LocalizationSourceConverter
     {
-        private const string ConfigurationPath = "Assets/Resources/Localization/LanguageConfig.asset";
         private const string HashesJsonPath = "Assets/Settings/LocalizationSourceHashes.json";
 
         // ---- Menu Items ----
@@ -19,9 +19,7 @@ namespace Localization.Editor
         [MenuItem("Tools/Localization/Open Language Config", priority = 1)]
         public static void OpenConfiguration()
         {
-            var settings = GetOrCreateSettings();
-            Selection.activeObject = settings;
-            EditorGUIUtility.PingObject(settings);
+            LanguageConfigProjectSettingsProvider.Open();
         }
 
         [MenuItem("Tools/Localization/Convert Changed Source Files", priority = 20)]
@@ -38,31 +36,17 @@ namespace Localization.Editor
 
         // ---- Core Logic ----
 
-        internal static LanguageConfigSO GetOrCreateSettings()
+        internal static LanguageProjectSettings GetOrCreateSettings()
         {
-            var settings = AssetDatabase.LoadAssetAtPath<LanguageConfigSO>(ConfigurationPath);
-            if (settings == null)
-            {
-                string dir = Path.GetDirectoryName(ConfigurationPath);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                settings = ScriptableObject.CreateInstance<LanguageConfigSO>();
-                if (!Directory.Exists(settings.sourceFolderPath)) Directory.CreateDirectory(settings.sourceFolderPath);
-                AssetDatabase.CreateAsset(settings, ConfigurationPath);
-                AssetDatabase.SaveAssets();
-
-                Debug.Log(F("log.created.settings", ConfigurationPath));
-            }
-
+            var settings = LanguageProjectSettings.GetOrCreate();
+            if (!Directory.Exists(settings.sourceFolderPath)) Directory.CreateDirectory(settings.sourceFolderPath);
             return settings;
         }
 
         private static void ExecuteConversion(bool forceAll)
         {
             var settings = GetOrCreateSettings();
+            LanguageConfigBaker.BakeRuntimeConfig(settings);
             if (string.IsNullOrEmpty(settings.sourceFolderPath) || string.IsNullOrEmpty(settings.soFolderPath))
             {
                 Debug.LogError(T("log.missing.settings"));
@@ -104,7 +88,6 @@ namespace Localization.Editor
                     relativeSourcePath = absolutePath.Replace("\\", "/").Replace(Application.dataPath, "Assets");
                 }
 
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(absolutePath);
                 string soName = BuildSoAssetName(absolutePath, settings.sourceFolderPath);
                 string soPath = $"{settings.soFolderPath}/{soName}.asset";
 
@@ -235,7 +218,7 @@ namespace Localization.Editor
         private static bool RemoveStaleHashEntries(
             Dictionary<string, string> previousHashes,
             Dictionary<string, string> newHashes,
-            LanguageConfigSO settings)
+            LanguageProjectSettings settings)
         {
             string soFolderPrefix = settings.soFolderPath.Replace('\\', '/').TrimEnd('/') + "/";
             bool removedAny = false;

@@ -10,7 +10,7 @@ using UnityEngine;
 using static Localization.Editor.LocalizationEditorText;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     internal static class XlsxLocalizationExporter
     {

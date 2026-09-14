@@ -6,7 +6,7 @@
 
 历史默认值和地址候选都兼容 Resources 风格路径。当前运行时实际通过 Addressables 加载资产；当 `LanguageDataSO` 通过 Key、重复 Key 和内容占位符校验后，工具会自动将其加入 `Localization` Addressables 分组，并将地址设为其 `NamespaceId`。
 
-`LanguageConfigSO` 也由包菜单默认创建在 `Assets/Resources/Localization`，因为它是运行时配置而不是仅 Editor 使用的状态。源文件哈希缓存仍放在 `Assets/Settings`，因为它只属于 Editor 数据。
+语言配置源保存在 `ProjectSettings/DotlineLocalizationSettings.asset`。包会把它烘焙成 `Assets/Resources/Localization/LanguageConfig.asset` 运行时副本，因为 `LocalizationSystem` 会在运行时自动加载这份副本。源文件哈希缓存仍放在 `Assets/Settings`，因为它只属于 Editor 数据。
 
 ## 为什么运行时提示找不到 Addressable language data？
 
@@ -30,7 +30,7 @@
 
 ## 如何新增语言？
 
-在 `LanguageConfigSO.languages` 中添加 `LanguageDefinition`，例如 `fr`。之后重新导入或导出源文件，标准表头和 Inspector 字段会自动包含新语言列。
+在 **Project Settings → Localization** 中添加 `LanguageDefinition`，例如 `fr`。之后重新导入或导出源文件，标准表头和 Inspector 字段会自动包含新语言列。
 
 ## 为什么删除源文件后 SO 还在？
 

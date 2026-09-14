@@ -6,7 +6,7 @@
 
 It is a historical default, and the address candidates stay compatible with Resources-style paths. Runtime loading actually goes through Addressables: once a `LanguageDataSO` passes key, duplicate-key and content-placeholder validation, the tooling automatically adds it to the `Localization` Addressables group with its `NamespaceId` as the address.
 
-`LanguageConfigSO` is also created under `Assets/Resources/Localization` by the package menu because it is runtime configuration, not Editor-only state. The source hash cache remains under `Assets/Settings` because it is Editor-only data.
+The source language settings live in `ProjectSettings/DotlineLocalizationSettings.asset`. The package bakes a runtime copy to `Assets/Resources/Localization/LanguageConfig.asset` because `LocalizationSystem` loads that copy automatically at runtime. The source hash cache remains under `Assets/Settings` because it is Editor-only data.
 
 ## Why does runtime report "Addressable language data not found"?
 
@@ -30,7 +30,7 @@ Bare (unquoted) arguments support numbers only, e.g. `<UI|ITEM_COUNT(3)>`. Text 
 
 ## How do I add a new language?
 
-Add a `LanguageDefinition` to `LanguageConfigSO.languages`, e.g. `fr`. Then re-import or re-export the source files; standard headers and Inspector fields will automatically include the new language column.
+Add a `LanguageDefinition` in **Project Settings → Localization**, e.g. `fr`. Then re-import or re-export the source files; standard headers and Inspector fields will automatically include the new language column.
 
 ## Why does the SO remain after deleting a source file?
 

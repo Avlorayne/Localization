@@ -1,5 +1,6 @@
 using Localization;
 using Localization.Editor;
+using Localization.Editor.Source;
 using NUnit.Framework;
 
 namespace Localization.Tests

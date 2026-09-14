@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Localization
 {
-    [CreateAssetMenu(menuName = "Settings/Language Config")]
     public class LanguageConfigSO : ScriptableObject
     {
         public string sourceFolderPath = "Assets/Editor/Text Files/Localization";

@@ -1,6 +1,6 @@
 # Localization for Unity
 
-[![Version](https://img.shields.io/badge/version-1.0.3-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.4-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
@@ -36,7 +36,7 @@ Requires **Unity 2022.3** or newer; `com.unity.addressables` 1.22.3 is resolved 
 **Option 1 — Git URL (recommended)**: in the Package Manager click `+` → **Add package from git URL** and paste:
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.3
+https://github.com/Avlorayne/Localization.git#1.0.4
 ```
 
 Or add it to `Packages/manifest.json` directly:
@@ -44,7 +44,7 @@ Or add it to `Packages/manifest.json` directly:
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.3"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.4"
   }
 }
 ```
@@ -94,7 +94,7 @@ The first row is the header: one `Key` column + one column per language + an opt
 Rules (violations fail the conversion or raise errors):
 
 - Use only uppercase letters, digits and underscores in `Key`, e.g. `START_GAME`; keys must be unique within a namespace — run **Tools → Localization → Validate Duplicate Keys** for a full check.
-- Language column headers accept either language codes or display names, e.g. `zh-Hans`, `简体中文`. Which languages the project supports is decided by `LanguageConfigSO` — confirm with a programmer before adding one.
+- Language column headers accept either language codes or display names, e.g. `zh-Hans`, `简体中文`. Which languages the project supports is decided in **Project Settings → Localization** — confirm with a programmer before adding one.
 - The comment column header can be `Comment`, `Note`, `备注`, etc. Comments are for the team only and never reach the game.
 - **Never put a `<UI|...>` placeholder inside a content of a language** — the editor treats that as a fatal error. To reference another entry, use a template (next section).
 
@@ -127,7 +127,8 @@ The generated `LanguageDataSO` assets can be searched, added, edited and deleted
 | Tools → Localization → Convert Changed Source Files | Everyday use after editing sheets; converts only what changed                                  |
 | Tools → Localization → Convert All Source Files     | After config changes or when in doubt; forces a full reconvert                                 |
 | Tools → Localization → Validate Duplicate Keys      | Full duplicate-key check                                                                       |
-| Tools → Localization → Open Language Config         | Opens the language config (adding languages or changing folders is usually a programmer's job) |
+| Tools → Localization → Open Language Config         | Opens the Project Settings language config (adding languages or changing folders is usually a programmer's job) |
+| Tools → Localization → Bake Runtime Language Config | Manually bakes the Project Settings config into the runtime `Resources` asset |
 
 ***
 
@@ -135,46 +136,56 @@ The generated `LanguageDataSO` assets can be searched, added, edited and deleted
 
 ### First-time configuration
 
-Run **Tools → Localization → Open Language Config** to create or open `Assets/Resources/Localization/LanguageConfig.asset`:
+Run **Tools → Localization → Open Language Config** to open **Project Settings → Localization**.
+The `Addressables Group` is neccessary to be set, and valid `Localization Data SO` assets will be added to this group autimatly.
 
 ![Open the Localization menu](screenshots/open_settins.png)
-![LanguageConfig](screenshots/lang_config.png)
+![Localization Project Settings](screenshots/lang_proj_config.png)
+
+The source settings are stored at `ProjectSettings/DotlineLocalizationSettings.asset`, outside `Assets`, so they are less likely to be removed during asset cleanup. Runtime reads the baked asset at `Assets/Resources/Localization/LanguageConfig.asset`. The package creates or refreshes that runtime copy when the Project Settings page changes, before source conversion, before entering Play Mode, and before a Player build; you can also run **Tools → Localization → Bake Runtime Language Config** manually.
 
 | Field              | Default                                 | Description                                                                                                                                 |
 | ------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sourceFolderPath` | `Assets/Editor/Text Files/Localization` | Source sheet folder; scanned recursively.                                                                                                   |
-| `soFolderPath`     | `Assets/Resources/Localization`         | Output folder for generated `LanguageDataSO` assets.                                                                                        |
+| `soFolderPath`     | `Assets/Resources/Localization`         | Output folder for generated `LanguageDataSO` assets. The runtime `LanguageConfig.asset` is baked to `Assets/Resources/Localization`.        |
 | `defaultLanguage`  | `zh-Hans`                               | Primary fallback: the final resort when a key is missing in the current language.                                                           |
 | `languages`        | `zh-Hans`, `zh-Hant`, `en`, `ja`, `ko`  | Language column definitions; drives sheet headers, import/export and the Inspector. Each entry can define one `fallbackLanguage`. |
 
 ### Conversion & Addressables
 
 - The converter hashes both source file and asset and converts incrementally — day to day, only changed sheets are processed.
+- Before each conversion, the runtime `LanguageConfig.asset` is baked so the Player side receives the latest language settings.
 - When a source file is deleted, the converter only cleans up its hash record and keeps the corresponding `LanguageDataSO`, so hand-maintained data is never lost.
 - Validated `LanguageDataSO` assets are **registered automatically** into the `Localization` Addressables group with address = `NamespaceId` (or the asset name when empty). Keep `NamespaceId` = asset name and no manual setup is needed.
 
 ### Runtime API
 
+`LocalizationSystem` is built with its parameterless constructor. On first use, it loads the baked runtime config from `Resources/Localization/LanguageConfig`, so callers do not pass or serialize a `LanguageConfigSO`.
+
 ```csharp
+using Localization;
 using UnityEngine;
 
 public sealed class LocalizedLabelExample : MonoBehaviour
 {
-    private BasicLocalizationExample localization;
+    private LocalizationSystem localization;
 
     private void Awake()
     {
-        localization = BasicLocalizationExample.Instance;
-        localization.SetLanguage("en");
-        Debug.Log($"Language: {localization.GetLanguageCode()}");
+        localization = new LocalizationSystem();
+        if (!localization.IsReady)
+            return;
+
+        localization.CurrentLanguageCode = "en";
+        Debug.Log($"Language: {localization.CurrentLanguageCode}");
         Debug.Log(localization.GetLocalizedText("<UI|START_GAME>"));
-        localization.AddListener(RefreshAllTexts); // refresh UI after switching language
+        localization.OnLanguageChanged += RefreshAllTexts; // refresh UI after switching language
     }
 
     private void OnDestroy()
     {
         if (localization != null)
-            localization.RemoveListener(RefreshAllTexts);
+            localization.OnLanguageChanged -= RefreshAllTexts;
     }
 
     private void RefreshAllTexts()
@@ -190,7 +201,7 @@ public sealed class LocalizedLabelExample : MonoBehaviour
   localization.GetLocalizedText($"<UI|WELCOME(<UI|PLAYER_NAME>, \"{name}\")>");
   ```
 - Runtime address resolution accepts the namespace name, the `Localization/<name>` convention, and the default `Assets/Resources/Localization/<name>.asset` path. With the default settings you don't need to manage these addresses manually.
-- For the sample facade, hook UI refresh logic with `BasicLocalizationExample.AddListener` and remove the same callback with `RemoveListener`.
+- The Basic Localization sample wraps the same `LocalizationSystem` construction in a scene-level `BasicLocalizationExample` facade for quick UI demos.
 
 ### WebGL notes
 
@@ -201,7 +212,7 @@ The current public API exposes synchronous lookup only. WebGL cannot block on Ad
 | Symptom                           | Fix                                                                                                                                                                                                           |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Wrong or empty text               | Check the template's namespace matches `NamespaceId` (or the asset name) and the key spelling; then confirm the language column exists — missing keys fall back along `fallbackLanguage` → `defaultLanguage`. |
-| Adding a new language             | Programmer adds a language definition to `LanguageConfig.languages`, the designer adds the matching column to the sheet header, then Convert All.                                                             |
+| Adding a new language             | Programmer adds a language definition in **Project Settings → Localization**, the designer adds the matching column to the sheet header, then Convert All.                                                             |
 | Empty lookups on WebGL first load | The current public API has no asynchronous/preload entry point; do not query an uncached namespace on WebGL in this release.                                                                         |
 
 ***
@@ -214,6 +225,7 @@ The current public API exposes synchronous lookup only. WebGL cannot block on Ad
 | [Architecture.md](Documentation~/Architecture.md)   | Runtime/editor architecture and data flow.            |
 | [Runtime.zh-CN.md](Documentation~/Runtime.zh-CN.md) | In-depth runtime guide: every Runtime type, template parsing and fallback rules (Simplified Chinese). |
 | [Testing.md](Documentation~/Testing.md)             | Automated tests and manual acceptance cases.          |
+| [Error and warning rules](Documentation~/LocalizationErrorWarningRules.md) | Error, warning, dialog, and frontend Editor handling policy. |
 | [FAQ.md](Documentation~/FAQ.md)                     | Frequently asked questions.                           |
 
 ## Sample
@@ -224,12 +236,12 @@ The imported sample project contains:
 
 - `SampleScene`, which already includes `BasicLocalizationExample` and the text example component.
 - `UI.csv`, a minimal localization source file.
-- `Resources/Localization/LanguageConfig.asset`, loaded automatically at runtime when no config is assigned.
+- `Resources/Localization/LanguageConfig.asset`, a baked runtime config copy loaded automatically by `LocalizationSystem`; the project-level source config still lives in **Project Settings → Localization**.
 
 To use the sample:
 
-1. Open the imported `BasicExample` folder and select `Resources/Localization/LanguageConfig.asset`.
-2. Set `sourceFolderPath` to the folder containing `UI.csv`, then keep `soFolderPath` at `Assets/Resources/Localization` or another project-approved output folder.
+1. Run **Tools → Localization → Open Language Config** to open **Project Settings → Localization**.
+2. Set `sourceFolderPath` to the imported folder containing `UI.csv`, then keep `soFolderPath` at `Assets/Resources/Localization` or another project-approved output folder.
 3. Initialize Addressables in the host project and run `Tools/Localization/Convert All Source Files`.
 4. Open `SampleScene` and run it. The generated localization assets are added to the `Localization` Addressables group automatically.
 
@@ -239,6 +251,7 @@ To use the sample:
 BasicLocalizationExample localization = BasicLocalizationExample.Instance;
 localization.SetLanguage("en");
 
+bool ready = localization.IsReady;
 string languageCode = localization.GetLanguageCode();
 string text = localization.GetLocalizedText("<UI|START_GAME>");
 
@@ -247,7 +260,7 @@ localization.AddListener(RefreshTexts);
 // localization.RemoveListener(RefreshTexts);
 ```
 
-The sample config is stored under `Resources/Localization`, so the runtime default lookup path is `Resources.Load<LanguageConfigSO>("Localization/LanguageConfig")`.
+Project Settings are baked to `Assets/Resources/Localization/LanguageConfig.asset`; `LocalizationSystem` loads this runtime config automatically from `Resources`.
 
 ## Known limitations
 

@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
 
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     /// <summary>一种本地化语言的源文件列定义：规范表头 + 读写条目字段的委托。</summary>
     internal readonly struct LocalizationLanguageColumn
@@ -49,7 +48,7 @@ namespace Localization.Editor
 
     /// <summary>
     /// 本地化源文件（CSV/XLSX）的规范表头与表头→字段映射。
-    /// CSV 与 XLSX 两个导入器共用；语言列与顺序优先由工程中的 LanguageConfigSO.languages 驱动。
+    /// CSV 与 XLSX 两个导入器共用；语言列与顺序优先由工程 Project Settings 中的语言配置驱动。
     /// </summary>
     internal static class LocalizationSourceSchema
     {
@@ -65,9 +64,8 @@ namespace Localization.Editor
         private static LocalizationLanguageColumn[] cachedLanguageColumns;
         private static bool warnedMissingLanguageConfig;
         private static bool warnedDuplicateLanguageCode;
-        private static bool warnedMultipleLanguageConfigs;
 
-        /// <summary>语言列（导出/导入/编辑器 UI 的统一数据源，顺序与 LanguageConfigSO.languages 一致）。</summary>
+        /// <summary>语言列（导出/导入/编辑器 UI 的统一数据源，顺序与 Project Settings 语言配置一致）。</summary>
         public static LocalizationLanguageColumn[] LanguageColumns =>
             cachedLanguageColumns ??= LoadLanguageColumns();
 
@@ -284,7 +282,7 @@ namespace Localization.Editor
 
         private static LocalizationLanguageColumn[] LoadLanguageColumns()
         {
-            LanguageConfigSO config = LoadLanguageConfig();
+            LanguageProjectSettings config = LoadLanguageConfig();
             if (config == null || config.languages == null || config.languages.Count == 0)
             {
                 if (!warnedMissingLanguageConfig)
@@ -324,22 +322,9 @@ namespace Localization.Editor
             return columns.Count > 0 ? columns.ToArray() : FallbackLanguageColumns;
         }
 
-        private static LanguageConfigSO LoadLanguageConfig()
+        private static LanguageProjectSettings LoadLanguageConfig()
         {
-            string[] guids = AssetDatabase.FindAssets("t:LanguageConfigSO");
-            if (guids == null || guids.Length == 0)
-                return null;
-
-            Array.Sort(guids, StringComparer.Ordinal);
-            if (guids.Length > 1 && !warnedMultipleLanguageConfigs)
-            {
-                warnedMultipleLanguageConfigs = true;
-                Debug.LogWarning(
-                    $"[Localization] Multiple LanguageConfigSO assets found. Using '{AssetDatabase.GUIDToAssetPath(guids[0])}'.");
-            }
-
-            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            return AssetDatabase.LoadAssetAtPath<LanguageConfigSO>(path);
+            return LanguageProjectSettings.GetOrCreate();
         }
 
         internal static bool LanguageIdsEqual(string left, string right)

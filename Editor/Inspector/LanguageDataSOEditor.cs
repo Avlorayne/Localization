@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Localization.Editor.Source;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -39,7 +40,7 @@ namespace Localization.Editor
             };
             root.AddToClassList("main-container");
 
-            // 2. 载入 USS 样式表：相对本脚本所在目录解析，目录整体移动时不断链
+            // 2. 载入 USS 样式表：使用稳定的包资源路径
             var ussAsset = AssetDatabase.LoadAssetAtPath<StyleSheet>(GetInspectorUssPath());
             if (ussAsset != null)
             {
@@ -166,12 +167,13 @@ namespace Localization.Editor
             return root;
         }
 
-        /// <summary>USS 与本脚本同目录，路径由脚本资产位置推导，避免硬编码绝对路径。</summary>
+        private const string InspectorUssPath =
+            "Packages/com.dotline.localization/Editor/Inspector/LanguageDataSO.uss";
+
+        /// <summary>使用稳定的包资源路径，避免从包内 MonoScript 解析路径。</summary>
         private string GetInspectorUssPath()
         {
-            string scriptDirectory =
-                Path.GetDirectoryName(AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(this)));
-            return Path.Combine(scriptDirectory ?? string.Empty, "LanguageDataSO.uss").Replace("\\", "/");
+            return InspectorUssPath;
         }
 
         /// <summary>在相关字段失焦后刷新校验状态，绝不在输入法组合输入过程中重建 UI。</summary>

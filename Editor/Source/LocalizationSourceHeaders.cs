@@ -1,5 +1,5 @@
 ﻿#if UNITY_EDITOR
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     /// <summary>本地化源文件（CSV/XLSX）表头的语义判断。</summary>
     internal static class LocalizationSourceHeaders

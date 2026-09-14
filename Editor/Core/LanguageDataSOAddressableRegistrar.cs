@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
+using Localization.Editor.Source;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 
@@ -12,7 +12,25 @@ namespace Localization.Editor
     /// </summary>
     internal static class LanguageDataSOAddressableRegistrar
     {
-        internal const string LocalizationGroupName = "Localization";
+        [InitializeOnLoadMethod]
+        private static void ScheduleRegistrationForExistingAssets()
+        {
+            EditorApplication.delayCall -= RegisterAllValidAssets;
+            EditorApplication.delayCall += RegisterAllValidAssets;
+        }
+
+        private static void RegisterAllValidAssets()
+        {
+            EditorApplication.delayCall -= RegisterAllValidAssets;
+
+            foreach (string guid in AssetDatabase.FindAssets("t:LanguageDataSO"))
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                var data = AssetDatabase.LoadAssetAtPath<LanguageDataSO>(assetPath);
+                if (data != null)
+                    TryRegisterIfValid(data);
+            }
+        }
 
         /// <summary>
         /// 当且仅当数据通过 Inspector 的完整合法性规则时，确保其位于 Localization Addressables 分组中。
@@ -27,7 +45,7 @@ namespace Localization.Editor
             if (string.IsNullOrEmpty(assetGuid))
                 return false;
 
-            var settings = AddressableAssetSettingsDefaultObject.Settings;
+            var settings = AddressableAssetSettingsDefaultObject.GetSettings(create: true);
             if (settings == null)
             {
                 Debug.LogWarning(
@@ -36,11 +54,21 @@ namespace Localization.Editor
                 return false;
             }
 
-            var group = settings.FindGroup(LocalizationGroupName);
+            string groupName = LanguageProjectSettings.GetOrCreate().GetLanguageDataAddressablesGroupName();
+            if (string.IsNullOrEmpty(groupName))
+            {
+                Debug.LogWarning(
+                    $"[Localization] No Addressables group is configured in Project Settings > Localization; " +
+                    $"skipped registration for '{assetPath}'.",
+                    data);
+                return false;
+            }
+
+            var group = settings.FindGroup(groupName);
             if (group == null)
             {
                 group = settings.CreateGroup(
-                    LocalizationGroupName,
+                    groupName,
                     setAsDefaultGroup: false,
                     readOnly: false,
                     postEvent: true,
@@ -52,7 +80,7 @@ namespace Localization.Editor
             if (group == null)
             {
                 Debug.LogError(
-                    $"[Localization] Could not create Addressables group '{LocalizationGroupName}'.",
+                    $"[Localization] Could not create Addressables group '{groupName}'.",
                     data);
                 return false;
             }
@@ -75,7 +103,7 @@ namespace Localization.Editor
             AssetDatabase.SaveAssets();
 
             Debug.Log(
-                $"[Localization] Registered '{assetPath}' as Addressable '{address}' in group '{LocalizationGroupName}'.",
+                $"[Localization] Registered '{assetPath}' as Addressable '{address}' in group '{groupName}'.",
                 data);
             return true;
         }

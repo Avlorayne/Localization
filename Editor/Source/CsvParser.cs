@@ -6,7 +6,7 @@ using UnityEngine;
 using static Localization.Editor.LocalizationEditorText;
 
 #if UNITY_EDITOR
-namespace Localization.Editor
+namespace Localization.Editor.Source
 {
     internal static class CsvParser
     {

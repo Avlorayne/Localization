@@ -2,6 +2,12 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.0.4] - 2026-09-14
+
+### Added
+
+- Declare `com.unity.textmeshpro` `3.0.7` as a package dependency so TMP components and Essentials are available to the package and its samples.
+
 ## [1.0.3] - 2026-09-14
 
 ### Changed
