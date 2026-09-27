@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class BasicLocalizationExample : MonoBehaviour
 {
     private static BasicLocalizationExample _instance;
+
     public static BasicLocalizationExample Instance
     {
         get

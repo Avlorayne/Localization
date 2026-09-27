@@ -1,5 +1,4 @@
-﻿using Localization;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 public class BasicLocalizationTextExample : MonoBehaviour
@@ -10,7 +9,7 @@ public class BasicLocalizationTextExample : MonoBehaviour
     void Start()
     {
         textMesh ??= GetComponent<TextMeshProUGUI>();
-        
+
         Refresh();
     }
 
@@ -26,6 +25,6 @@ public class BasicLocalizationTextExample : MonoBehaviour
 
     private void Refresh()
     {
-       textMesh.text = BasicLocalizationExample.Instance.GetLocalizedText(template);
+        textMesh.text = BasicLocalizationExample.Instance.GetLocalizedText(template);
     }
 }

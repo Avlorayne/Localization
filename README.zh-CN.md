@@ -1,9 +1,9 @@
 # Unity 本地化包（Localization）
 
-[![Version](https://img.shields.io/badge/version-1.0.4-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.6-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 [English](README.md) | **简体中文**
 
@@ -36,7 +36,13 @@
 **方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.4
+https://github.com/Avlorayne/Localization.git
+```
+
+此链接不指定版本，会跟随仓库默认分支。若要固定到某个版本，请使用：
+
+```
+https://github.com/Avlorayne/Localization.git#1.0.6
 ```
 
 或直接在 `Packages/manifest.json` 中添加：
@@ -44,10 +50,12 @@ https://github.com/Avlorayne/Localization.git#1.0.4
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.4"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git"
   }
 }
 ```
+
+如需在 manifest 中固定到此版本，请在 URL 后添加 `#1.0.6`。
 
 **方式二 — 内嵌包**：将本目录复制到目标项目的 `Packages/com.dotline.localization`，Unity 自动识别，无需在 manifest 中声明。如需显式引用：
 
@@ -270,4 +278,4 @@ localization.AddListener(RefreshTexts);
 
 ## 许可证
 
-MIT 许可证，详见 [LICENSE.md](LICENSE.md)。第三方库的许可见 [Third Party Notices.md](Third%20Party%20Notices.md)。
+MIT 许可证，详见 [LICENSE](LICENSE)。第三方库的许可见 [Third Party Notices.md](Third%20Party%20Notices.md)。

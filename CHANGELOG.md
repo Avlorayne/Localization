@@ -2,6 +2,18 @@
 
 All notable changes to this package will be documented in this file.
 
+## [1.0.6] - 2026-09-27
+
+### Changed
+
+- Clean up the Basic Localization sample and remove its unused `Localization` namespace import.
+
+## [1.0.5] - 2026-09-14
+
+### Changed
+
+- Move Superpower and ExcelDataReader into separate Unity packages and declare them as package dependencies.
+
 ## [1.0.4] - 2026-09-14
 
 ### Added

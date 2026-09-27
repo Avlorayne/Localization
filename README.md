@@ -1,9 +1,9 @@
 # Localization for Unity
 
-[![Version](https://img.shields.io/badge/version-1.0.4-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.6-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **English** | [简体中文](README.zh-CN.md)
 
@@ -36,7 +36,13 @@ Requires **Unity 2022.3** or newer; `com.unity.addressables` 1.22.3 is resolved 
 **Option 1 — Git URL (recommended)**: in the Package Manager click `+` → **Add package from git URL** and paste:
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.4
+https://github.com/Avlorayne/Localization.git
+```
+
+This unversioned URL follows the repository's default branch. To pin a specific release instead, use:
+
+```
+https://github.com/Avlorayne/Localization.git#1.0.6
 ```
 
 Or add it to `Packages/manifest.json` directly:
@@ -44,10 +50,12 @@ Or add it to `Packages/manifest.json` directly:
 ```json
 {
   "dependencies": {
-    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git#1.0.4"
+    "com.dotline.localization": "https://github.com/Avlorayne/Localization.git"
   }
 }
 ```
+
+To pin the manifest to this release, append `#1.0.6` to the URL.
 
 **Option 2 — Embedded package**: copy this folder into your project's `Packages/com.dotline.localization`; Unity picks it up without any manifest entry. To pin it explicitly:
 
@@ -270,4 +278,4 @@ Project Settings are baked to `Assets/Resources/Localization/LanguageConfig.asse
 
 ## License
 
-MIT — see [LICENSE.md](LICENSE.md). Third-party libraries are covered by [Third Party Notices.md](Third%20Party%20Notices.md).
+MIT — see [LICENSE](LICENSE). Third-party libraries are covered by [Third Party Notices.md](Third%20Party%20Notices.md).

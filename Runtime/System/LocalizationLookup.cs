@@ -11,6 +11,9 @@ namespace Localization
     /// </summary>
     internal class LocalizationLookup
     {
+        ///
+        /// namespace -> (key -> entries)
+        ///
         private readonly Dictionary<string, Dictionary<string, LocalizationData>> _lookup =
             new(StringComparer.OrdinalIgnoreCase);
 
