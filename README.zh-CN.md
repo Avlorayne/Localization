@@ -1,6 +1,6 @@
 # Unity 本地化包（Localization）
 
-[![Version](https://img.shields.io/badge/version-1.0.6-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.7-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -26,12 +26,13 @@
 - **一键转换** — Excel/CSV 源表在 Unity 里一键转成 `LanguageDataSO` 资产；按哈希做增量转换，只处理改过的表。
 - **Key 校验** — 重复 Key 和非法内容在转换阶段就被拦截，不会带进游戏。
 - **模板系统** — 运行时解析 `<UI|KEY>` 取词，支持参数和嵌套模板。
+- **TextMesh Pro 集成** — 可在 TextMeshPro 和 TextMeshProUGUI 检视面板中选择本地化 Key。
 - **自动注册 Addressables** — 通过校验的资产自动进入 `Localization` 分组，无需手动配置。
 - **多语言回退** — 每种语言可单独设置一级回退语言，之后再尝试可配置的默认语言。
 
 ## 安装
 
-需要 **Unity 2022.3** 或更高版本；`com.unity.addressables` 1.22.3 会自动解析依赖。项目需已初始化 Addressables（打开过 **Window → Asset Management → Addressables → Groups** 生成 Settings 资产），否则转换时无法自动注册资产，会在 Console 提示。
+需要 **Unity 2022.3** 或更高版本；`com.unity.addressables` 1.22.3 和 `com.unity.textmeshpro` 3.0.7 会自动解析依赖。项目需已初始化 Addressables（打开过 **Window → Asset Management → Addressables → Groups** 生成 Settings 资产），否则转换时无法自动注册资产，会在 Console 提示。
 
 **方式一 — Git URL（推荐）**：在 Package Manager 点击 `+` → **Add package from git URL**，粘贴：
 
@@ -42,7 +43,7 @@ https://github.com/Avlorayne/Localization.git
 此链接不指定版本，会跟随仓库默认分支。若要固定到某个版本，请使用：
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.6
+https://github.com/Avlorayne/Localization.git#1.0.7
 ```
 
 或直接在 `Packages/manifest.json` 中添加：
@@ -55,7 +56,7 @@ https://github.com/Avlorayne/Localization.git#1.0.6
 }
 ```
 
-如需在 manifest 中固定到此版本，请在 URL 后添加 `#1.0.6`。
+如需在 manifest 中固定到此版本，请在 URL 后添加 `#1.0.7`。
 
 **方式二 — 内嵌包**：将本目录复制到目标项目的 `Packages/com.dotline.localization`，Unity 自动识别，无需在 manifest 中声明。如需显式引用：
 

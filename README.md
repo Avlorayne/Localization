@@ -1,6 +1,6 @@
 # Localization for Unity
 
-[![Version](https://img.shields.io/badge/version-1.0.6-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.7-blue)](CHANGELOG.md)
 [![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black?logo=unity\&logoColor=white)](https://unity.com/releases/editor/archive)
 [![Addressables](https://img.shields.io/badge/Addressables-1.22.3-orange)](https://docs.unity3d.com/Packages/com.unity.addressables@1.22/manual/index.html)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -26,12 +26,13 @@ Key features:
 - **One-click conversion** — Excel/CSV source sheets are converted into `LanguageDataSO` assets inside Unity; incremental hashing means only changed sheets are re-converted.
 - **Key validation** — duplicate keys and illegal content are caught at conversion time, before they can reach the game.
 - **Template system** — `<UI|KEY>` lookups support arguments and nesting, resolved at runtime.
+- **TextMesh Pro integration** — pick localization keys from the TextMeshPro and TextMeshProUGUI inspectors.
 - **Automatic Addressables registration** — validated assets enter the `Localization` group with no manual setup.
 - **Fallback languages** — each language may define one fallback language, followed by a configurable default language.
 
 ## Installation
 
-Requires **Unity 2022.3** or newer; `com.unity.addressables` 1.22.3 is resolved automatically. The project must have Addressables initialized (open **Window → Asset Management → Addressables → Groups** once to generate the Settings asset); otherwise conversion cannot auto-register assets and logs a warning to the Console.
+Requires **Unity 2022.3** or newer; `com.unity.addressables` 1.22.3 and `com.unity.textmeshpro` 3.0.7 are resolved automatically. The project must have Addressables initialized (open **Window → Asset Management → Addressables → Groups** once to generate the Settings asset); otherwise conversion cannot auto-register assets and logs a warning to the Console.
 
 **Option 1 — Git URL (recommended)**: in the Package Manager click `+` → **Add package from git URL** and paste:
 
@@ -42,7 +43,7 @@ https://github.com/Avlorayne/Localization.git
 This unversioned URL follows the repository's default branch. To pin a specific release instead, use:
 
 ```
-https://github.com/Avlorayne/Localization.git#1.0.6
+https://github.com/Avlorayne/Localization.git#1.0.7
 ```
 
 Or add it to `Packages/manifest.json` directly:
@@ -55,7 +56,7 @@ Or add it to `Packages/manifest.json` directly:
 }
 ```
 
-To pin the manifest to this release, append `#1.0.6` to the URL.
+To pin the manifest to this release, append `#1.0.7` to the URL.
 
 **Option 2 — Embedded package**: copy this folder into your project's `Packages/com.dotline.localization`; Unity picks it up without any manifest entry. To pin it explicitly:
 
